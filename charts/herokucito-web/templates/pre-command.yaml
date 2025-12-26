@@ -21,11 +21,8 @@ spec:
       serviceAccountName: "{{ include "herokucito-web.serviceAccountName" . }}"
       containers:
         - name: pre-command
-          {{- with .Values.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           image: "{{ include "herokucito-web.image" . }}"
+          {{- include "herokucito-web.env" . | nindent 10 }}
           command:
             - sh
             - -c

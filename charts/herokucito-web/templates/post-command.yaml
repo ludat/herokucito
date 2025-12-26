@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "herokucito-web.fullname" . }}-post
+  name: "{{ include "herokucito-web.fullname" . }}-post"
   labels:
     {{- include "herokucito-web.labels" . | nindent 4 }}
     role: post-command
@@ -22,6 +22,7 @@ spec:
       containers:
         - name: post-command
           image: "{{ include "herokucito-web.image" . }}"
+          {{- include "herokucito-web.env" . | nindent 10 }}
           command:
             - sh
             - -c
@@ -29,4 +30,4 @@ spec:
               set -euo pipefail
               set -x
               {{- .Values.postCommand | nindent 14 }}
-{{- end -}}
+{{- end }}
