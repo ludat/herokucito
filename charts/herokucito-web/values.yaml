@@ -6,7 +6,7 @@ preCommand: null
 
 postCommand: null
 
-listen:
+expose:
   enabled: false
   host: null
 
