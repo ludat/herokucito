@@ -1,0 +1,17 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: "{{ include "herokucito-web.fullname" . }}-pg"
+  annotations:
+    argocd.argoproj.io/sync-wave: '-20'
+spec:
+  bootstrap:
+    initdb:
+      database: appdb
+      owner: app
+      postInitSQL:
+        - ALTER USER app WITH SUPERUSER;
+  storage:
+    size: 5Gi
+{{- end }}

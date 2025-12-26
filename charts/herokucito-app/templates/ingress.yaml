@@ -1,0 +1,28 @@
+{{- if .Values.listen.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "herokucito-web.fullname" . }}
+  labels:
+    {{- include "herokucito-web.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.host | quote }}
+      secretName: {{ include "herokucito-web.fullname" . }}
+  rules:
+    - host: {{ .Values.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "herokucito-web.fullname" . }}
+                port:
+                  number: {{ .Values.port }}
+{{- end -}}

@@ -1,0 +1,36 @@
+{{- if .Values.preCommand }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "herokucito-web.fullname" . }}-pre"
+  labels:
+    {{- include "herokucito-web.labels" . | nindent 4 }}
+    role: pre-command
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    metadata:
+      name: {{ include "herokucito-web.fullname" . }}-pre
+      labels:
+        {{- include "herokucito-web.labels" . | nindent 8 }}
+        role: pre-command
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: "{{ include "herokucito-web.serviceAccountName" . }}"
+      containers:
+        - name: pre-command
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ include "herokucito-web.image" . }}"
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+              set -x
+              {{- .Values.preCommand | nindent 14 }}
+{{- end }}

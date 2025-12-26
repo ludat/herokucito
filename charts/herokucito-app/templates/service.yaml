@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "herokucito-web.fullname" . }}
+  labels:
+    {{- include "herokucito-web.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "herokucito-web.selectorLabels" . | nindent 4 }}

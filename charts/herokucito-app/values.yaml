@@ -1,0 +1,19 @@
+image:
+  repository: null
+  tag: null
+
+preCommand: null
+
+postCommand: null
+
+listen:
+  enabled: false
+  host: null
+
+secrets: []
+
+port: 8000
+
+postgres:
+  enabled: false
+  uriEnv: DATABASE_URL

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "herokucito-web.fullname" . }}
+  labels:
+    {{- include "herokucito-web.labels" . | nindent 4 }}
+    role: server
+spec:
+  selector:
+    matchLabels:
+      {{- include "herokucito-web.selectorLabels" . | nindent 6 }}
+      role: server
+  template:
+    metadata:
+      labels:
+        {{- include "herokucito-web.labels" . | nindent 8 }}
+        role: server
+    spec:
+      imagePullSecrets:
+        - name: pull-secret
+      serviceAccountName: "{{ include "herokucito-web.serviceAccountName" . }}"
+      containers:
+        - name: server
+          image: "{{ include "herokucito-web.image" . }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          {{- include "herokucito-web.env" . | nindent 10 }}
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          #   timeoutSeconds: 3
+          #   failureThreshold: 1
+          #   periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 4
+            failureThreshold: 3
+            periodSeconds: 5
+
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            timeoutSeconds: 5
+            periodSeconds: 1

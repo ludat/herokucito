@@ -1,0 +1,32 @@
+{{- if .Values.postCommand -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "herokucito-web.fullname" . }}-post
+  labels:
+    {{- include "herokucito-web.labels" . | nindent 4 }}
+    role: post-command
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    metadata:
+      name: {{ include "herokucito-web.fullname" . }}-post
+      labels:
+        {{- include "herokucito-web.labels" . | nindent 8 }}
+        role: post-command
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: "{{ include "herokucito-web.serviceAccountName" . }}"
+      containers:
+        - name: post-command
+          image: "{{ include "herokucito-web.image" . }}"
+          command:
+            - sh
+            - -c
+            - |
+              set -euo pipefail
+              set -x
+              {{- .Values.postCommand | nindent 14 }}
+{{- end -}}
