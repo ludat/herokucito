@@ -8,6 +8,7 @@ metadata:
     role: pre-command
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   template:
