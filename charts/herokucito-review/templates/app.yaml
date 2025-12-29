@@ -30,8 +30,8 @@ spec:
     - group: argoproj.io
       kind: Application
       name: "review-{{ .Values.branch }}"
-      jqPathExpressions:
-        - .spec.sources[] | select(.chart == "herokucito-web") | .targetRevision
+      jsonPointers:
+        - /spec/sources/-/targetRevision
   syncPolicy:
     automated:
       enabled: true
