@@ -26,12 +26,6 @@ spec:
         - name: "host"
           value: "{{ .Values.branch }}.split.ludat.io"
       ignoreMissingValueFiles: true
-  ignoreDifferences:
-    - group: argoproj.io
-      kind: Application
-      name: "review-{{ .Values.branch }}"
-      jsonPointers:
-        - /spec/sources/-/targetRevision
   syncPolicy:
     automated:
       enabled: true
