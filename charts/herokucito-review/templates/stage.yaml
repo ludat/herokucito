@@ -33,7 +33,7 @@ spec:
               sources:
               - repoURL: ghcr.io/ludat/charts
                 chart: herokucito-web
-                desiredRevision: {{ `${{` }} chartFrom("oci://ghcr.io/ludat/charts/herokucito-web").Tag {{ `}}` }}
+                desiredRevision: {{ `${{` }} chartFrom("oci://ghcr.io/ludat/charts/herokucito-web").Version {{ `}}` }}
                 updateTargetRevision: true
   requestedFreight:
     - origin:
