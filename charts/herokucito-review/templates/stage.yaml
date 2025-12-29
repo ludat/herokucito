@@ -23,7 +23,7 @@ spec:
                 helm:
                   images:
                   - key: image.tag
-                    tag: {{ `${{` }} imageFrom({{ .Values.imageUrl | quote }}).Tag {{ `}}` }}
+                    value: {{ `${{` }} imageFrom({{ .Values.imageUrl | quote }}).Tag {{ `}}` }}
         - if: {{ `${{` }} ctx.targetFreight.origin.name == "infra" {{ `}}` }}
           uses: argocd-update
           config:
