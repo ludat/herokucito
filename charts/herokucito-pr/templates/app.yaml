@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "review-{{ .Values.branch }}"
+  annotations:
+    kargo.akuity.io/authorized-stage: "banana-split:review-{{ .Values.branch }}"
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: banana-split
+    server: https://kubernetes.default.svc
+  project: banana-split
+  sources:
+  - ref: values
+    repoURL: https://github.com/ludat/banana-split.git
+    targetRevision: herokucito
+  - repoURL: ghcr.io/ludat/charts
+    chart: herokucito-web
+    helm:
+      valueFiles:
+        - "$values/pr/{{ .branch }}.yaml"
+        - "$values/pr.yaml"
+        - "$values/dev/rendered_values.yaml"
+      ignoreMissingValueFiles: true
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+    syncOptions:
+    - ServerSideApply=true

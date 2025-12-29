@@ -1,0 +1,33 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: "review-{{ .Values.branch }}"
+  annotations:
+    kargo.akuity.io/color: avocado
+  finalizers:
+    - kargo.akuity.io/finalizer
+spec:
+  # promotionTemplate:
+  #   spec:
+  #     vars:
+  #       - name: image
+  #         value: ghcr.io/ludat/banana-split
+  #       - name: chart
+  #         value: oci://ghcr.io/ludat/charts/herokucito-web
+  #       - name: infraRepo
+  #         value: https://github.com/ludat/banana-split.git
+  #       - name: infraRepoBranch
+  #         value: herokucito
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: "review-{{ .Values.branch }}"
+      sources:
+        direct: true
+        stages: []
+    - origin:
+        kind: Warehouse
+        name: infra
+      sources:
+        direct: true
+        stages: []

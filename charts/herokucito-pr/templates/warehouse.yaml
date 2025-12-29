@@ -1,0 +1,14 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: "review-{{ .Values.branch }}"
+spec:
+  freightCreationPolicy: Automatic
+  interval: 5m0s
+  subscriptions:
+    - image:
+        allowTags: ^{{ .Values.branch }}-\d{8}-\d{6}$
+        discoveryLimit: 20
+        imageSelectionStrategy: Lexical
+        repoURL: {{ .Values.imageUri | quote }}
+        strictSemvers: false
