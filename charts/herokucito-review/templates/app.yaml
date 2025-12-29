@@ -26,6 +26,12 @@ spec:
         - name: "host"
           value: "{{ .Values.branch }}.split.ludat.io"
       ignoreMissingValueFiles: true
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      name: "review-{{ .Values.branch }}"
+      jqPathExpressions:
+        - .spec.sources[] | select(.chart == "herokucito-web") | .targetRevision
   syncPolicy:
     automated:
       enabled: true
