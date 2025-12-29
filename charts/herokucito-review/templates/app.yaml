@@ -23,7 +23,7 @@ spec:
         - "$values/pr.yaml"
         - "$values/dev/rendered_values.yaml"
       parameters:
-        - name: "host"
+        - name: "expose.host"
           value: "{{ .Values.branch }}.split.ludat.io"
       ignoreMissingValueFiles: true
   syncPolicy:
