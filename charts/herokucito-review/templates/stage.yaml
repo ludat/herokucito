@@ -10,7 +10,7 @@ spec:
   promotionTemplate:
     spec:
       steps:
-        - if: {{ `${{ ctx.targetFreight.origin.name == "review-{{ .Values.branch }}" }}` }}
+        - if: {{ `${{` }} ctx.targetFreight.origin.name == "review-{{ .Values.branch }}" {{ `}}` }}
           uses: argocd-update
           config:
             apps:
@@ -22,8 +22,8 @@ spec:
                 helm:
                   images:
                   - key: image.tag
-                    tag: ${{ '{{' }} imageFrom({{ .Values.imageURL | quote }}).Version {{ '}}' }}
-        - if: {{ `${{ ctx.targetFreight.origin.name == "infra" }}` }}
+                    tag: {{ `${{` }} imageFrom({{ .Values.imageUrl | quote }}).Version {{ `}}` }}
+        - if: {{ `${{` }} ctx.targetFreight.origin.name == "infra" {{ `}}` }}
           uses: argocd-update
           config:
             apps:
@@ -31,7 +31,7 @@ spec:
               sources:
               - repoURL: ghcr.io/ludat/charts
                 chart: herokucito-web
-                desiredRevision: ${{ '{{' }} chartFrom("oci://ghcr.io/ludat/charts/herokucito-web").Version {{ '}}' }}
+                desiredRevision: {{ `${{` }} chartFrom("oci://ghcr.io/ludat/charts/herokucito-web").Version {{ `}}` }}
                 updateTargetRevision: true
   requestedFreight:
     - origin:
