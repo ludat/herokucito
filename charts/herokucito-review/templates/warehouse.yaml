@@ -10,5 +10,5 @@ spec:
         allowTags: ^{{ .Values.branch }}-\d{8}-\d{6}$
         discoveryLimit: 20
         imageSelectionStrategy: Lexical
-        repoURL: {{ .Values.imageUri | quote }}
+        repoURL: {{ .Values.imageUrl | quote }}
         strictSemvers: false
