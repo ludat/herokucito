@@ -7,17 +7,32 @@ metadata:
   finalizers:
     - kargo.akuity.io/finalizer
 spec:
-  # promotionTemplate:
-  #   spec:
-  #     vars:
-  #       - name: image
-  #         value: ghcr.io/ludat/banana-split
-  #       - name: chart
-  #         value: oci://ghcr.io/ludat/charts/herokucito-web
-  #       - name: infraRepo
-  #         value: https://github.com/ludat/banana-split.git
-  #       - name: infraRepoBranch
-  #         value: herokucito
+  promotionTemplate:
+    spec:
+      steps:
+        - if: {{ `${{ ctx.targetFreight.origin.name == "review-{{ .Values.branch }}" }}` }}
+          uses: argocd-update
+          config:
+            apps:
+            - name: "review-{{ .Values.branch }}"
+              sources:
+              - repoURL: ghcr.io/ludat/charts
+                chart: herokucito-web
+                updateTargetRevision: true
+                helm:
+                  images:
+                  - key: image.tag
+                    tag: ${{ '{{' }} imageFrom({{ .Values.imageURL | quote }}).Version {{ '}}' }}
+        - if: {{ `${{ ctx.targetFreight.origin.name == "infra" }}` }}
+          uses: argocd-update
+          config:
+            apps:
+            - name: "review-{{ .Values.branch }}"
+              sources:
+              - repoURL: ghcr.io/ludat/charts
+                chart: herokucito-web
+                desiredRevision: ${{ '{{' }} chartFrom("oci://ghcr.io/ludat/charts/herokucito-web").Version {{ '}}' }}
+                updateTargetRevision: true
   requestedFreight:
     - origin:
         kind: Warehouse
