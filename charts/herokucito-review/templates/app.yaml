@@ -22,6 +22,9 @@ spec:
         - "$values/pr/{{ .branch }}.yaml"
         - "$values/pr.yaml"
         - "$values/dev/rendered_values.yaml"
+      parameters:
+        - name: "host"
+          value: "{{ .Values.branch }}.split.ludat.io"
       ignoreMissingValueFiles: true
   syncPolicy:
     automated:
