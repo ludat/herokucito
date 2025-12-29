@@ -19,7 +19,7 @@ spec:
               sources:
               - repoURL: ghcr.io/ludat/charts
                 chart: herokucito-web
-                updateTargetRevision: true
+                # updateTargetRevision: true
                 helm:
                   images:
                   - key: image.tag
