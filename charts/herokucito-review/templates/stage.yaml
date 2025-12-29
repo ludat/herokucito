@@ -15,6 +15,7 @@ spec:
           config:
             apps:
             - name: "review-{{ .Values.branch }}"
+              namespace: banana-split
               sources:
               - repoURL: ghcr.io/ludat/charts
                 chart: herokucito-web
@@ -28,6 +29,7 @@ spec:
           config:
             apps:
             - name: "review-{{ .Values.branch }}"
+              namespace: banana-split
               sources:
               - repoURL: ghcr.io/ludat/charts
                 chart: herokucito-web
