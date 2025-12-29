@@ -12,6 +12,11 @@ permissions:
 
 jobs:
   release:
+    strategy:
+      matrix:
+        chart:
+          - herokucito-web
+          - herokucito-review
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,7 +25,7 @@ jobs:
       - name: Retrieve version from Chart.yaml
         id: chart_version
         run: |
-          echo "version=$(yq '.version' charts/herokucito-web/Chart.yaml)" >> "$GITHUB_OUTPUT"
+          echo "version=$(yq '.version' charts/${{ matrix.chart }}/Chart.yaml)" >> "$GITHUB_OUTPUT"
 
       - name: Login to GitHub Container Registry
         run: |
@@ -30,12 +35,12 @@ jobs:
         run: |
           set -euo pipefail
           set -x
-          if helm pull oci://ghcr.io/ludat/charts/herokucito-web --version ${{ steps.chart_version.outputs.version }}; then
+          if helm pull oci://ghcr.io/ludat/charts/${{ matrix.chart }} --version ${{ steps.chart_version.outputs.version }}; then
             echo "Version ${{ steps.chart_version.outputs.version }} exists."
             echo "Failing."
             exit 1
           fi
 
-          helm package charts/herokucito-web
+          helm package charts/${{ matrix.chart }}
 
-          helm push "herokucito-web-${{ steps.chart_version.outputs.version }}.tgz" oci://ghcr.io/ludat/charts
+          helm push "${{ matrix.chart }}-${{ steps.chart_version.outputs.version }}.tgz" oci://ghcr.io/ludat/charts
