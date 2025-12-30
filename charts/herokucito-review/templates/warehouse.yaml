@@ -2,6 +2,8 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
   name: "review-{{ .Values.branch }}"
+  annotations:
+    kargo.akuity.io/color: purple
 spec:
   freightCreationPolicy: Automatic
   interval: 5m0s

@@ -3,7 +3,7 @@ kind: Stage
 metadata:
   name: "review-{{ .Values.branch }}"
   annotations:
-    kargo.akuity.io/color: avocado
+    kargo.akuity.io/color: purple
   finalizers:
     - kargo.akuity.io/finalizer
 spec:
@@ -41,7 +41,6 @@ spec:
         name: "review-{{ .Values.branch }}"
       sources:
         direct: true
-        stages: []
     - origin:
         kind: Warehouse
         name: infra
