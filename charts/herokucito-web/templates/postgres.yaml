@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-options: Delete=confirm
 {{- end }}
 spec:
-  enablePDB: {{ .Values.postgres.ha }}
+  enablePDB: {{ .Values.postgres.ha | default false }}
   bootstrap:
     initdb:
       database: appdb
