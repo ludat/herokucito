@@ -5,7 +5,11 @@ metadata:
   name: "{{ include "herokucito-web.fullname" . }}-pg"
   annotations:
     argocd.argoproj.io/sync-wave: '-20'
+{{- if .Values.postgres.failsafe -}}
+    argocd.argoproj.io/sync-options: Delete=confirm
+{{- end -}}
 spec:
+  enablePDB: {{ .Values.postgres.ha }}
   bootstrap:
     initdb:
       database: appdb

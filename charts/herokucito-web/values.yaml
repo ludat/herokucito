@@ -9,6 +9,9 @@ postCommand: null
 expose:
   enabled: false
   host: null
+  ha: false
+  backups: false
+  failsafe: false
 
 secrets: []
 
