@@ -35,6 +35,11 @@ spec:
           #   failureThreshold: 1
           #   periodSeconds: 10
 
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+              sizeLimit: 100Mi
+
           livenessProbe:
             httpGet:
               path: /
@@ -49,3 +54,7 @@ spec:
               port: http
             timeoutSeconds: 5
             periodSeconds: 1
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
