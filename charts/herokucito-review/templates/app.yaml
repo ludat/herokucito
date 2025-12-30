@@ -19,9 +19,9 @@ spec:
     chart: herokucito-web
     helm:
       valueFiles:
-        - "$values/pr/{{ .branch }}.yaml"
+        # - "$values/dev/rendered_values.yaml"
         - "$values/pr.yaml"
-        - "$values/dev/rendered_values.yaml"
+        - "$values/pr/{{ .Values.branch }}.yaml"
       parameters:
         - name: "expose.host"
           value: "{{ .Values.branch }}.split.ludat.io"
