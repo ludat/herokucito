@@ -2,8 +2,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ .Values.project }}
-  namespace: {{ .Values.project }}
+  name: {{ .Values.project | quote }}
+  namespace: {{ .Values.project | quote }}
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
@@ -17,6 +17,7 @@ spec:
           slug: '{{ `{{` }} .path.path | trimPrefix "" | slugify 23 {{ `}}` }}'
   template:
     metadata:
+      # TODO(ludat) I'd like to remove this prefix now since it's not useful if the app is inside it's own namespace
       name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
       annotations:
         kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .path.path {{ `}}` }}"
