@@ -31,7 +31,7 @@ spec:
           ref: values
         - repoURL: "{{ `{{` }} .helm.repoURL {{ `}}` }}"
           chart: "{{ `{{` }} .helm.chart {{ `}}` }}"
-          path: "{{ `{{ dig "helm" "path" "" . }}` }}"
+          path: '{{ `{{ dig "helm" "path" "" . }}` }}'
           targetRevision: "{{ `{{` }} .helm.targetRevision {{ `}}` }}"
 
           helm:
