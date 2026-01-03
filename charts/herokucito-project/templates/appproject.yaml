@@ -7,7 +7,9 @@ metadata:
 spec:
   description: Project deployed with Herokucito
   sourceRepos:
-    - '*'
+    - https://github.com/ludat/herokucito.git
+    - ghcr.io/ludat/charts
+    - https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git
   sourceNamespaces:
     - {{ .Values.project | quote }}
   destinations:
