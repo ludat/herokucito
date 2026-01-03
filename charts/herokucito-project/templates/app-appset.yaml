@@ -1,0 +1,51 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .Values.project }}
+  namespace: {{ .Values.project }}
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: "https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git"
+        revision: herokucito
+        files:
+          - path: "**/rendered_values.yaml"
+        values:
+          slug: '{{ `{{` }} .path.path | trimPrefix "" | slugify 23 {{ `}}` }}'
+  template:
+    metadata:
+      name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
+      annotations:
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .path.path {{ `}}` }}"
+    spec:
+      project: "{{ .Values.project }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .Values.project }}"
+      sources:
+        - repoURL: "https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git"
+          targetRevision: herokucito
+          ref: values
+        - repoURL: "{{ `{{` }} .helm.repoURL {{ `}}` }}"
+          chart: "{{ `{{` }} .helm.chart {{ `}}` }}"
+          path: "{{ `{{` }} .helm.path {{ `}}` }}"
+          targetRevision: "{{ `{{` }} .helm.targetRevision {{ `}}` }}"
+
+          helm:
+            valueFiles:
+              - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
+
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
+
+  templatePatch: |
+    {{ `{{-` }} if .helm.autoSync {{ `}}` }}
+    spec:
+      syncPolicy:
+        automated:
+          prune: {{ `{{` }} .helm.prune {{ `}}` }}
+    {{ `{{-` }} end {{ `}}` }}

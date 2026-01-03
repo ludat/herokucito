@@ -1,0 +1,15 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: "{{ .Values.project }}"
+  namespace: argocd
+spec:
+  description: Project deployed with Herokucito
+  sourceRepos:
+    - '*'
+  sourceNamespaces:
+    - {{ .Values.project | quote }}
+  destinations:
+    - namespace: {{ .Values.project | quote }}
+      server: https://kubernetes.default.svc
