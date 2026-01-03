@@ -31,7 +31,7 @@ spec:
           ref: values
         - repoURL: "{{ `{{` }} .helm.repoURL {{ `}}` }}"
           chart: "{{ `{{` }} .helm.chart {{ `}}` }}"
-          path: "{{ `{{` }} .helm.path {{ `}}` }}"
+          path: "{{ `{{ dig "helm" "path" "" . }}` }}"
           targetRevision: "{{ `{{` }} .helm.targetRevision {{ `}}` }}"
 
           helm:
@@ -43,9 +43,9 @@ spec:
           - ServerSideApply=true
 
   templatePatch: |
-    {{ `{{-` }} if .helm.autoSync {{ `}}` }}
+    {{ `{{-` }} if dig "helm" "autoSync" false . {{ `}}` }}
     spec:
       syncPolicy:
         automated:
-          prune: {{ `{{` }} .helm.prune {{ `}}` }}
+          prune: {{ `{{` }} dig "helm" "prune" false . {{ `}}` }}
     {{ `{{-` }} end {{ `}}` }}
