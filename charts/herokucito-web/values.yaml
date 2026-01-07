@@ -9,9 +9,6 @@ postCommand: null
 expose:
   enabled: false
   host: null
-  ha: false
-  backups: false
-  failsafe: false
 
 secrets: []
 
@@ -20,3 +17,6 @@ port: 8000
 postgres:
   enabled: false
   uriEnv: DATABASE_URL
+  ha: false
+  backups: false
+  failsafe: false
