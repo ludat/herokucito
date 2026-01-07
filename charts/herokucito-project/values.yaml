@@ -2,3 +2,11 @@ project: null
 repo:
   owner: null
   name: null
+
+resourceQuotas:
+  requests.cpu: "1"
+  requests.memory: "1Gi"
+  limits.cpu: "2"
+  limits.memory: "2Gi"
+  # sata.storageclass.storage.k8s.io/requests.storage: "10Gi"
+  # ssd.storageclass.storage.k8s.io/requests.storage: "10Gi"
