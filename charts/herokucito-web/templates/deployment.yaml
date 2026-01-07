@@ -16,8 +16,6 @@ spec:
         {{- include "herokucito-web.labels" . | nindent 8 }}
         role: server
     spec:
-      imagePullSecrets:
-        - name: pull-secret
       serviceAccountName: "{{ include "herokucito-web.serviceAccountName" . }}"
       containers:
         - name: server
