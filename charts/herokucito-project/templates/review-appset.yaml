@@ -1,4 +1,5 @@
----
+{{/*
+{{- if .Values.reviews.enabled -}}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -10,8 +11,8 @@ spec:
   generators:
     - pullRequest:
         github:
-          owner: {{ .Values.repo.owner | quote }}
-          repo: {{ .Values.repo.name | quote }}
+          owner: {{ .Values.reviews.owner | quote }}
+          repo: {{ .Values.reviews.name | quote }}
           # # Reference to a Secret containing an access token. (optional)
           tokenRef:
             secretName: github-token
@@ -41,8 +42,8 @@ spec:
           helm:
             valuesObject:
               branch: "{{ `{{` }} .values.slug {{ `}}` }}"
-              imageUrl: "ghcr.io/{{ .Values.repo.owner }}/{{ .Values.repo.name }}"
-              repoUrl: https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git
+              imageUrl: "ghcr.io/ludat/banana-split"
+              repoUrl: https://github.com/ludat/banana-split.git
 
       ignoreDifferences:
         - group: argoproj.io
@@ -61,3 +62,5 @@ spec:
           prune: true
         syncOptions:
           - RespectIgnoreDifferences=true
+{{- end -}}
+*/}}

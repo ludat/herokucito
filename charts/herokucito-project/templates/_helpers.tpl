@@ -60,3 +60,21 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "herokucito-project.repoUrl" -}}
+https://github.com/{{ .Values.infra.owner }}/{{ .Values.infra.name }}.git
+{{- end }}
+
+{{/*
+Generate platform config for herokucito-app chart
+This is injected into ApplicationSet and overrides user values
+*/}}
+{{- define "herokucito-project.platformConfig" -}}
+platformKey: {{ .Values.platformKey | required "platformKey is required" | quote }}
+platform:
+  {{ .Values.platformKey }}:
+    {{- .Values.platformConfig | toYaml | nindent 4 }}
+{{- end }}

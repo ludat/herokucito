@@ -1,12 +1,61 @@
-project: null
-repo:
-  owner: null
-  name: null
+project: banana-split
 
-resourceQuotas:
+infra:
+  owner: ludat
+  name: banana-split
+  branch: herokucito
+
+# App chart (controlled by platform, not users)
+appChart:
+  repoURL: ghcr.io/ludat/charts
+  chart: herokucito-app
+  path: ""
+  version: "0.1.0"
+
+# reviews:
+#   enabled: false
+#   owner: ludat
+#   name: banana-split
+
+resourceQuota:
   requests.cpu: "1"
   requests.memory: "1Gi"
   limits.cpu: "2"
   limits.memory: "2Gi"
   # sata.storageclass.storage.k8s.io/requests.storage: "10Gi"
   # ssd.storageclass.storage.k8s.io/requests.storage: "10Gi"
+
+# Platform configuration (injected into herokucito-app charts)
+# This random key prevents users from overriding platform settings
+platformKey: ""
+
+platformConfig:
+  resourcePresets:
+    small:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 20m
+        memory: 64Mi
+    medium:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    large:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+  postgres:
+    defaultVersion: "16"
+    sizePresets:
+      small: 5Gi
+      medium: 5Gi
+      large: 5Gi

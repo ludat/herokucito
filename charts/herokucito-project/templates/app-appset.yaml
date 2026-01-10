@@ -1,4 +1,3 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -7,46 +6,46 @@ metadata:
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
+  strategy:
+    type: RollingSync
+    rollingSync:
+      steps:
+        - maxUpdate: 1
   generators:
     - git:
-        repoURL: "https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git"
+        repoURL: "{{ include "herokucito-project.repoUrl" . }}"
         revision: herokucito
         files:
           - path: "**/rendered_values.yaml"
         values:
-          slug: '{{ `{{` }} .path.path | trimPrefix "" | slugify 23 {{ `}}` }}'
+          slug: '{{ `{{` }} .path.path | trimPrefix "" | slugify 23 false {{ `}}` }}'
   template:
     metadata:
       # TODO(ludat) I'd like to remove this prefix now since it's not useful if the app is inside it's own namespace
       name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
       annotations:
-        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .path.path {{ `}}` }}"
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .values.slug {{ `}}` }}"
     spec:
-      project: "{{ .Values.project }}"
+      project: {{ .Values.project | quote }}
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ .Values.project }}"
+        namespace: {{ .Values.project | quote }}
       sources:
-        - repoURL: "https://github.com/{{ .Values.repo.owner }}/{{ .Values.repo.name }}.git"
-          targetRevision: herokucito
+        - repoURL: "{{ include "herokucito-project.repoUrl" . }}"
+          targetRevision: {{ .Values.infra.branch | quote }}
           ref: values
-        - repoURL: "{{ `{{` }} .helm.repoURL {{ `}}` }}"
-          chart: "{{ `{{` }} .helm.chart {{ `}}` }}"
-          path: '{{ `{{ dig "helm" "path" "" . }}` }}'
-          targetRevision: "{{ `{{` }} .helm.targetRevision {{ `}}` }}"
+        - repoURL: {{ .Values.appChart.repoURL }}
+          chart: {{ .Values.appChart.chart }}
+          path: {{ .Values.appChart.path | quote }}
+          targetRevision: {{ .Values.appChart.version | quote }}
 
           helm:
             valueFiles:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
+            # Platform config injected last (overrides user values)
+            values: |
+              {{- include "herokucito-project.platformConfig" . | nindent 14 }}
 
       syncPolicy:
         syncOptions:
           - ServerSideApply=true
-
-  templatePatch: |
-    {{ `{{-` }} if dig "helm" "autoSync" false . {{ `}}` }}
-    spec:
-      syncPolicy:
-        automated:
-          prune: {{ `{{` }} dig "helm" "prune" false . {{ `}}` }}
-    {{ `{{-` }} end {{ `}}` }}
