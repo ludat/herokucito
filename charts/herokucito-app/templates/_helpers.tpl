@@ -103,7 +103,8 @@ env:
 {{- range $depName := $service.dependencies }}
 {{- $dep := index $root.Values.dependencies $depName }}
 {{- if eq $dep.type "postgres" }}
-  - name: DATABASE_URL
+  # FIXME: this should be at least parameterized
+  - name: BANANASPLIT_DATABASE_URL
     valueFrom:
       secretKeyRef:
         name: {{ $appName }}-{{ $depName }}-app
