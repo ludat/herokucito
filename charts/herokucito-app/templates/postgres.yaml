@@ -27,7 +27,7 @@ spec:
   instances: 1
   enablePDB: false
   {{- end }}
-  imageName: ghcr.io/cloudnative-pg/postgresql:{{ $dep.version | default $pgPlatform.defaultVersion | default "16" }}
+  # imageName: ghcr.io/cloudnative-pg/postgresql:{{ $dep.version | default $pgPlatform.defaultVersion | default "16" }}
   bootstrap:
     initdb:
       database: appdb
