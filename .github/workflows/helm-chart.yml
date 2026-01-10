@@ -17,6 +17,7 @@ jobs:
         chart:
           - herokucito-web
           - herokucito-review
+          - herokucito-app
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
