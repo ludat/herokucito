@@ -98,6 +98,6 @@ spec:
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
 {{- end }}
-{{- end }}
-{{- end }}
 */}}
+{{- end }}
+{{- end }}
