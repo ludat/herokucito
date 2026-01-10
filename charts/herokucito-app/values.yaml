@@ -6,7 +6,9 @@ name: ""
 services: {}
 # services:
 #   backend:
-#     image: myregistry/backend
+#     image:
+#       repository: myregistry/backend
+#       tag: latest
 #     port: 8080
 #     resources: small          # small/medium/large (defined by platform)
 #     dependencies: [db]

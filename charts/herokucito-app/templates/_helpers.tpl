@@ -75,8 +75,8 @@ Build image string from service config
 Usage: {{ include "herokucito-app.image" (dict "service" $serviceConfig) }}
 */}}
 {{- define "herokucito-app.image" -}}
-{{- if .service.tag }}
-{{- printf "%s:%s" .service.image .service.tag }}
+{{- if .service.image.tag }}
+{{- printf "%s:%s" .service.image.repository .service.image.tag }}
 {{- else }}
 {{- .service.image }}
 {{- end }}
