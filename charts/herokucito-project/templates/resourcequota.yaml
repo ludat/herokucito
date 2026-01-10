@@ -4,4 +4,4 @@ metadata:
   name: compute-resources
   namespace: {{ .Values.project | quote }}
 spec:
-  hard: {{ .Values.resourceQuotas | toJson }}
+  hard: {{ .Values.resourceQuota | toJson }}
