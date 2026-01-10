@@ -1,0 +1,74 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+{{- /* Pre-deploy hooks */ -}}
+{{- range $hook := index .Values.hooks "pre-deploy" }}
+{{- $serviceName := $hook.service }}
+{{- $service := index $root.Values.services $serviceName }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $appName }}-pre-{{ $hook.name }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: hook
+    app.kubernetes.io/hook-type: pre-deploy
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    metadata:
+      name: {{ $appName }}-pre-{{ $hook.name }}
+      labels:
+        {{- include "herokucito-app.labels" $root | nindent 8 }}
+        app.kubernetes.io/component: hook
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}
+      containers:
+        - name: {{ $hook.name }}
+          image: {{ include "herokucito-app.image" (dict "service" $service) | quote }}
+          command:
+            {{- toYaml $hook.command | nindent 12 }}
+          {{- include "herokucito-app.env" (dict "root" $root "serviceName" $serviceName "service" $service) | nindent 10 }}
+          resources:
+            {{- include "herokucito-app.resources" (dict "root" $root "preset" ($hook.resources | default $service.resources)) | nindent 12 }}
+{{- end }}
+{{- /* Post-deploy hooks */ -}}
+{{- range $hook := index .Values.hooks "post-deploy" }}
+{{- $serviceName := $hook.service }}
+{{- $service := index $root.Values.services $serviceName }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $appName }}-post-{{ $hook.name }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: hook
+    app.kubernetes.io/hook-type: post-deploy
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    metadata:
+      name: {{ $appName }}-post-{{ $hook.name }}
+      labels:
+        {{- include "herokucito-app.labels" $root | nindent 8 }}
+        app.kubernetes.io/component: hook
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}
+      containers:
+        - name: {{ $hook.name }}
+          image: {{ include "herokucito-app.image" (dict "service" $service) | quote }}
+          command:
+            {{- toYaml $hook.command | nindent 12 }}
+          {{- include "herokucito-app.env" (dict "root" $root "serviceName" $serviceName "service" $service) | nindent 10 }}
+          resources:
+            {{- include "herokucito-app.resources" (dict "root" $root "preset" ($hook.resources | default $service.resources)) | nindent 12 }}
+{{- end }}

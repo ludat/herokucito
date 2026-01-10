@@ -1,0 +1,31 @@
+{{ include "herokucito-app.fullname" . }} deployed!
+
+Services:
+{{- range $name, $service := .Values.services }}
+  - {{ $name }}{{ if $service.port }} (port {{ $service.port }}){{ end }}
+{{- end }}
+
+{{- $hasRoutes := false }}
+{{- range $name, $service := .Values.services }}
+{{- if $service.routes }}
+{{- $hasRoutes = true }}
+{{- end }}
+{{- end }}
+
+{{- if $hasRoutes }}
+
+Routes:
+{{- range $name, $service := .Values.services }}
+{{- range $route := $service.routes }}
+  - https://{{ $route.host }}{{ $route.path | default "/" }} -> {{ $name }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.dependencies }}
+
+Dependencies:
+{{- range $name, $dep := .Values.dependencies }}
+  - {{ $name }} ({{ $dep.type }})
+{{- end }}
+{{- end }}

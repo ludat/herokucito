@@ -1,0 +1,49 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+{{- /* Build a map of host -> list of {path, serviceName} */ -}}
+{{- $hostRoutes := dict -}}
+{{- range $serviceName, $service := .Values.services }}
+{{- range $route := $service.routes }}
+{{- $host := $route.host }}
+{{- $path := $route.path | default "/" }}
+{{- $routeEntry := dict "path" $path "serviceName" $serviceName "pathType" ($route.pathType | default "Prefix") }}
+{{- if hasKey $hostRoutes $host }}
+{{- $existing := index $hostRoutes $host }}
+{{- $_ := set $hostRoutes $host (append $existing $routeEntry) }}
+{{- else }}
+{{- $_ := set $hostRoutes $host (list $routeEntry) }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Create one Ingress per host */ -}}
+{{- range $host, $routes := $hostRoutes }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $appName }}-{{ $host | replace "." "-" | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ $host | quote }}
+      secretName: {{ $appName }}-{{ $host | replace "." "-" | trunc 63 | trimSuffix "-" }}-tls
+  rules:
+    - host: {{ $host | quote }}
+      http:
+        paths:
+          {{- range $routes }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $appName }}-{{ .serviceName }}
+                port:
+                  name: http
+          {{- end }}
+{{- end }}

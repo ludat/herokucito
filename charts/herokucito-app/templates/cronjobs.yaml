@@ -1,0 +1,37 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+{{- range $jobName, $job := .Values.jobs }}
+{{- $serviceName := $job.service }}
+{{- $service := index $root.Values.services $serviceName }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $appName }}-job-{{ $jobName }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: {{ $job.schedule | quote }}
+  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Forbid" }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 3 }}
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 1 }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "herokucito-app.labels" $root | nindent 12 }}
+            app.kubernetes.io/component: cronjob
+        spec:
+          restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
+          serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}
+          containers:
+            - name: {{ $jobName }}
+              image: {{ include "herokucito-app.image" (dict "service" $service) | quote }}
+              command:
+                {{- toYaml $job.command | nindent 16 }}
+              {{- include "herokucito-app.env" (dict "root" $root "serviceName" $serviceName "service" $service) | nindent 14 }}
+              resources:
+                {{- include "herokucito-app.resources" (dict "root" $root "preset" ($job.resources | default $service.resources)) | nindent 16 }}
+{{- end }}

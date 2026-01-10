@@ -1,0 +1,22 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+{{- range $serviceName, $service := .Values.services }}
+{{- if $service.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $appName }}-{{ $serviceName }}
+  labels:
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $serviceName) | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "herokucito-app.serviceSelectorLabels" (dict "root" $root "serviceName" $serviceName) | nindent 4 }}
+{{- end }}
+{{- end }}

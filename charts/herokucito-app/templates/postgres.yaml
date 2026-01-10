@@ -1,0 +1,103 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+{{- $platform := include "herokucito-app.platform" . | fromYaml -}}
+{{- range $depName, $dep := .Values.dependencies }}
+{{- if eq $dep.type "postgres" }}
+{{- $clusterName := printf "%s-%s" $appName $depName }}
+{{- $storeName := printf "%s-%s-store" $appName $depName }}
+{{- $pgPlatform := $platform.postgres }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ $clusterName }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-20"
+    {{- if $dep.failsafe }}
+    argocd.argoproj.io/sync-options: Delete=confirm
+    {{- end }}
+spec:
+  {{- /* Determine instance count based on HA setting */ -}}
+  {{- if $dep.ha }}
+  instances: 2
+  enablePDB: true
+  {{- else }}
+  instances: 1
+  enablePDB: false
+  {{- end }}
+  imageName: ghcr.io/cloudnative-pg/postgresql:{{ $dep.version | default $pgPlatform.defaultVersion | default "16" }}
+  bootstrap:
+    initdb:
+      database: appdb
+      owner: app
+      postInitSQL:
+        - ALTER USER app WITH SUPERUSER;
+  storage:
+    {{- $sizePreset := $dep.size | default "small" }}
+    {{- $storageSize := index $pgPlatform.sizePresets $sizePreset | default "5Gi" }}
+    size: {{ $storageSize }}
+{{/* No backups for now */}}
+{{/*
+  {{- if $dep.backups }}
+  plugins:
+    - enabled: true
+      name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: {{ $storeName }}
+  {{- end }}
+{{- if $dep.backups }}
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: {{ $storeName }}
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-20"
+spec:
+  configuration:
+    {{- with $pgPlatform.backup.endpointURL }}
+    endpointURL: {{ . }}
+    {{- end }}
+    destinationPath: {{ printf "%s/%s" $pgPlatform.backup.destinationPath $appName | quote }}
+    {{- if $pgPlatform.backup.s3Credentials }}
+    s3Credentials:
+      accessKeyId:
+        name: {{ $pgPlatform.backup.s3Credentials.secretName }}
+        key: {{ $pgPlatform.backup.s3Credentials.accessKeyIdKey | default "ACCESS_KEY_ID" }}
+      secretAccessKey:
+        name: {{ $pgPlatform.backup.s3Credentials.secretName }}
+        key: {{ $pgPlatform.backup.s3Credentials.secretAccessKeyKey | default "ACCESS_SECRET_KEY" }}
+    {{- end }}
+    {{- if $pgPlatform.backup.googleCredentials }}
+    googleCredentials:
+      applicationCredentials:
+        name: {{ $pgPlatform.backup.googleCredentials.secretName }}
+        key: {{ $pgPlatform.backup.googleCredentials.key | default "key.json" }}
+    {{- end }}
+    wal:
+      compression: {{ $pgPlatform.backup.walCompression | default "gzip" }}
+  retentionPolicy: {{ $pgPlatform.backup.retentionPolicy | default "30d" | quote }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ $clusterName }}-backup
+  labels:
+    {{- include "herokucito-app.labels" $root | nindent 4 }}
+spec:
+  schedule: {{ $pgPlatform.backup.schedule | default "0 0 0 * * *" | quote }}
+  backupOwnerReference: self
+  cluster:
+    name: {{ $clusterName }}
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+{{- end }}
+{{- end }}
+{{- end }}
+*/}}
