@@ -9,6 +9,7 @@ spec:
   sourceRepos:
     - https://github.com/ludat/herokucito.git
     - ghcr.io/ludat/charts
+    - "{{ include "herokucito-project.repoUrl" . }}"
   sourceNamespaces:
     - {{ .Values.project | quote }}
   destinations:
