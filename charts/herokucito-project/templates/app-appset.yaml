@@ -10,7 +10,17 @@ spec:
     type: RollingSync
     rollingSync:
       steps:
-        - maxUpdate: 1
+        - matchExpressions:
+            - key: herokucito.ludat.io/production
+              operator: NotIn
+              values:
+                - "true"
+        - matchExpressions:
+            - key: herokucito.ludat.io/production
+              operator: In
+              values:
+                - "true"
+          maxUpdate: 1
   generators:
     - git:
         repoURL: "{{ include "herokucito-project.repoUrl" . }}"
@@ -23,6 +33,8 @@ spec:
     metadata:
       # TODO(ludat) I'd like to remove this prefix now since it's not useful if the app is inside it's own namespace
       name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
+      labels:
+        herokucito.ludat.io/production: {{ `{{` }} dig "production" false . | toString {{ `}}` }}
       annotations:
         kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .values.slug {{ `}}` }}"
 
