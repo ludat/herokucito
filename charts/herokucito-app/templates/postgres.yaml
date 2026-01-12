@@ -1,11 +1,15 @@
 {{- $root := . -}}
 {{- $appName := include "herokucito-app.fullname" . -}}
 {{- $platform := include "herokucito-app.platform" . | fromYaml -}}
+{{- $production := .Values.production | default false -}}
 {{- range $depName, $dep := .Values.dependencies }}
 {{- if eq $dep.type "postgres" }}
 {{- $clusterName := printf "%s-%s" $appName $depName }}
-{{- $storeName := printf "%s-%s-store" $appName $depName }}
 {{- $pgPlatform := $platform.postgres }}
+{{- /* Production defaults: ha=true, failsafe=true, backups=true */ -}}
+{{- $ha := $production }}
+{{- $failsafe := $production }}
+{{- $backups := $production }}
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
@@ -15,19 +19,17 @@ metadata:
     {{- include "herokucito-app.labels" $root | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
-    {{- if $dep.failsafe }}
+    {{- if $failsafe }}
     argocd.argoproj.io/sync-options: Delete=confirm
     {{- end }}
 spec:
-  {{- /* Determine instance count based on HA setting */ -}}
-  {{- if $dep.ha }}
+  {{- if $ha }}
   instances: 2
   enablePDB: true
   {{- else }}
   instances: 1
   enablePDB: false
   {{- end }}
-  # imageName: ghcr.io/cloudnative-pg/postgresql:{{ $dep.version | default $pgPlatform.defaultVersion | default "16" }}
   bootstrap:
     initdb:
       database: appdb

@@ -3,6 +3,9 @@
 
 name: ""
 
+# Production mode
+production: false
+
 services: {}
 # services:
 #   backend:
