@@ -25,6 +25,9 @@ spec:
       name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
       annotations:
         kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .values.slug {{ `}}` }}"
+
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
     spec:
       project: {{ .Values.project | quote }}
       destination:
@@ -49,3 +52,15 @@ spec:
       syncPolicy:
         syncOptions:
           - ServerSideApply=true
+
+  templatePatch: |
+    {{ `{{-` }} if .production {{ `}}` }}
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=confirm
+    spec:
+      syncPolicy:
+        prune: false
+        syncOptions:
+          - Delete=false
+    {{ `{{-` }} end {{ `}}` }}
