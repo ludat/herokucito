@@ -54,7 +54,7 @@ spec:
           - ServerSideApply=true
 
   templatePatch: |
-    {{ `{{-` }} if .production {{ `}}` }}
+    {{ `{{-` }} if dig "production" false . {{ `}}` }}
     metadata:
       annotations:
         argocd.argoproj.io/sync-options: Delete=confirm
