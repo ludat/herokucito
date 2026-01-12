@@ -34,7 +34,7 @@ spec:
       # TODO(ludat) I'd like to remove this prefix now since it's not useful if the app is inside it's own namespace
       name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
       labels:
-        herokucito.ludat.io/production: {{ `{{` }} dig "production" false . | toString {{ `}}` }}
+        herokucito.ludat.io/production: '{{ `{{` }} dig "production" false . | toString {{ `}}` }}'
       annotations:
         kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .values.slug {{ `}}` }}"
 
