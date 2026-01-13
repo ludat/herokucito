@@ -1,0 +1,130 @@
+{{- $root := . -}}
+{{- $appName := include "herokucito-app.fullname" . -}}
+---
+# Default deny all traffic for app pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-default-deny
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Allow DNS egress for all app pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-dns
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{- /* Allow ingress from ingress-nginx to server pods with ports */ -}}
+{{- $hasRoutedServices := false -}}
+{{- range $serviceName, $service := .Values.services }}
+{{- if $service.port }}
+{{- $hasRoutedServices = true -}}
+{{- end }}
+{{- end }}
+{{- if $hasRoutedServices }}
+---
+# Allow ingress from ingress controller to server pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-ingress
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+      app.kubernetes.io/component: server
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+{{- end }}
+---
+# Allow internal app traffic (services talking to each other)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-internal
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: {{ $appName }}
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: {{ $appName }}
+{{- /* Allow access to postgres clusters */ -}}
+{{- $hasPostgres := false -}}
+{{- range $depName, $dep := .Values.dependencies }}
+{{- if eq $dep.type "postgres" }}
+{{- $hasPostgres = true -}}
+{{- end }}
+{{- end }}
+{{- if $hasPostgres }}
+---
+# Allow egress to postgres clusters
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-postgres
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Egress
+  egress:
+    {{- range $depName, $dep := .Values.dependencies }}
+    {{- if eq $dep.type "postgres" }}
+    - to:
+        - podSelector:
+            matchLabels:
+              cnpg.io/cluster: {{ $appName }}-{{ $depName }}
+      ports:
+        - protocol: TCP
+          port: 5432
+    {{- end }}
+    {{- end }}
+{{- end }}
