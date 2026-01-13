@@ -93,6 +93,28 @@ spec:
         - podSelector:
             matchLabels:
               app.kubernetes.io/part-of: {{ $appName }}
+---
+# Allow egress to external IPs (outside the cluster)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-external
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
 {{- /* Allow access to postgres clusters */ -}}
 {{- $hasPostgres := false -}}
 {{- range $depName, $dep := .Values.dependencies }}
