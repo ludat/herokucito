@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         chart:
-          - herokucito-web
-          - herokucito-review
+          - herokucito-project
+          - herokucito-stage
           - herokucito-app
     runs-on: ubuntu-latest
     steps:
