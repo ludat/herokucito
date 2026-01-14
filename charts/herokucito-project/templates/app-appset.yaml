@@ -72,7 +72,9 @@ spec:
         argocd.argoproj.io/sync-options: Delete=confirm
     spec:
       syncPolicy:
-        prune: false
+        automated:
+          enabled: false
+          prune: false
         syncOptions:
           - Delete=false
     {{ `{{-` }} end {{ `}}` }}

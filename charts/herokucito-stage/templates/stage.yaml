@@ -1,0 +1,74 @@
+{{- $hasRegistryImages := false }}
+{{- $upstreamStages := dict }}
+{{- range $serviceName, $service := .Values.services }}
+{{- if and $service.image $service.image.source }}
+{{- if eq $service.image.source.type "registry" }}
+{{- $hasRegistryImages = true }}
+{{- else if eq $service.image.source.type "stage" }}
+{{- $_ := set $upstreamStages $service.image.source.upstream true }}
+{{- end }}
+{{- end }}
+{{- end }}
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: {{ .Values.stage.name }}
+  namespace: {{ .Values.stage.project }}
+  finalizers:
+    - kargo.akuity.io/finalizer
+spec:
+  {{- if .Values.stage.promotion.auto }}
+  autoPromotionEnabled: true
+  {{- end }}
+  requestedFreight:
+    {{- if $hasRegistryImages }}
+    - origin:
+        kind: Warehouse
+        name: {{ .Values.stage.name }}
+      sources:
+        direct: true
+    {{- end }}
+    {{- range $upstream, $_ := $upstreamStages }}
+    - origin:
+        kind: Warehouse
+        name: {{ $upstream }}
+      sources:
+        stages:
+          - {{ $upstream }}
+    {{- end }}
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: git-clone
+          config:
+            repoURL: {{ .Values.stage.valuesRepo.url }}
+            checkout:
+              - path: ./out
+                branch: {{ .Values.stage.valuesRepo.branch }}
+        {{- range $serviceName, $service := .Values.services }}
+        {{- if and $service.image $service.image.source }}
+        - uses: yaml-update
+          as: update-{{ $serviceName }}
+          config:
+            path: ./out/{{ $.Values.stage.valuesRepo.path }}
+            updates:
+              - key: services.{{ $serviceName }}.image.repository
+                value: {{ `${{` }} imageFrom({{ $service.image.repository | quote }}).RepoURL {{ `}}` }}
+              - key: services.{{ $serviceName }}.image.tag
+                value: {{ `${{` }} imageFrom({{ $service.image.repository | quote }}).Tag + "@" + imageFrom({{ $service.image.repository | quote }}).Digest {{ `}}` }}
+        {{- end }}
+        {{- end }}
+        - uses: git-commit
+          as: commit
+          config:
+            path: ./out
+            message: |
+              [{{ .Values.stage.name }}] Update images
+        - uses: git-push
+          config:
+            path: ./out
+        - uses: argocd-update
+          config:
+            apps:
+              - name: {{ .Values.stage.project }}-{{ .Values.stage.name }}
+                namespace: {{ .Values.stage.project }}

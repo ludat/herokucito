@@ -47,29 +47,29 @@ jobs: {}
 # ============================================================
 # PLATFORM CONFIG (injected by ApplicationSet, do not modify)
 # ============================================================
-# platformKey: <random-string>
-# platform:
-#   <random-string>:
-#     resourcePresets:
-#       small:
-#         limits: { cpu: 100m, memory: 256Mi }
-#         requests: { cpu: 20m, memory: 64Mi }
-#       medium:
-#         limits: { cpu: 500m, memory: 512Mi }
-#         requests: { cpu: 100m, memory: 128Mi }
-#       large:
-#         limits: { cpu: "1", memory: 1Gi }
-#         requests: { cpu: 250m, memory: 256Mi }
-#     postgres:
-#       defaultVersion: "16"
-#       sizePresets:
-#         small: 5Gi
-#         medium: 10Gi
-#         large: 20Gi
-#       backup:
-#         endpointURL: https://....r2.cloudflarestorage.com
-#         destinationPath: s3://cloudnativepg-backups
-#         s3Credentials:
-#           secretName: shared-psql-wale-creds
-#         retentionPolicy: "30d"
-#         schedule: "0 0 0 * * *"
+platformKey: x
+platform:
+  x:
+    resourcePresets:
+      small:
+        limits: { cpu: 100m, memory: 256Mi }
+        requests: { cpu: 20m, memory: 64Mi }
+      medium:
+        limits: { cpu: 500m, memory: 512Mi }
+        requests: { cpu: 100m, memory: 128Mi }
+      large:
+        limits: { cpu: "1", memory: 1Gi }
+        requests: { cpu: 250m, memory: 256Mi }
+    postgres:
+      defaultVersion: "16"
+      sizePresets:
+        small: 5Gi
+        medium: 10Gi
+        large: 20Gi
+      backup:
+        endpointURL: https://....r2.cloudflarestorage.com
+        destinationPath: s3://cloudnativepg-backups
+        s3Credentials:
+          secretName: shared-psql-wale-creds
+        retentionPolicy: "30d"
+        schedule: "0 0 0 * * *"

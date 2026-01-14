@@ -12,6 +12,14 @@ appChart:
   path: ""
   version: "0.1.0"
 
+# Kargo chart (creates Stage + Warehouse resources)
+kargoChart:
+  enabled: true
+  repoURL: ghcr.io/ludat/charts
+  chart: herokucito-stage
+  path: ""
+  version: "0.1.0"
+
 # reviews:
 #   enabled: false
 #   owner: ludat

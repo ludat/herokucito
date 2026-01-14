@@ -1,0 +1,32 @@
+{{- $registryImages := list }}
+{{- range $serviceName, $service := .Values.services }}
+{{- if and $service.image $service.image.source (eq $service.image.source.type "registry") }}
+{{- $registryImages = append $registryImages (dict "serviceName" $serviceName "image" $service.image) }}
+{{- end }}
+{{- end }}
+{{- if $registryImages }}
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: {{ .Values.stage.name }}
+  namespace: {{ .Values.stage.project }}
+spec:
+  freightCreationPolicy: Automatic
+  interval: 5m0s
+  subscriptions:
+    {{- range $entry := $registryImages }}
+    - image:
+        repoURL: {{ $entry.image.repository | quote }}
+        {{- if $entry.image.source.semver }}
+        semverConstraint: {{ $entry.image.source.semver | quote }}
+        imageSelectionStrategy: SemVer
+        {{- else if $entry.image.source.allowTags }}
+        allowTags: {{ $entry.image.source.allowTags | quote }}
+        imageSelectionStrategy: Lexical
+        {{- else if $entry.image.source.tagPattern }}
+        allowTags: {{ $entry.image.source.tagPattern | quote }}
+        imageSelectionStrategy: Lexical
+        {{- end }}
+        discoveryLimit: 20
+    {{- end }}
+{{- end }}

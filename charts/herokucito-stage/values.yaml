@@ -1,0 +1,50 @@
+# Stage-specific config (injected by ApplicationSet)
+stage:
+  name: null                      # stage name (e.g., staging, production)
+  project: null                   # Kargo/ArgoCD project namespace
+  valuesRepo:
+    url: null
+    branch: null
+    path: null                    # e.g., staging/rendered_values.yaml
+  promotion:
+    auto: false
+  # Additional warehouse subscriptions (e.g., shared infra/chart warehouse)
+  warehouses: []
+  # warehouses:
+  #   - name: infra
+  #     direct: true
+
+# ============================================================
+# Same structure as herokucito-app values
+# ============================================================
+
+name: ""
+
+services: {}
+# services:
+#   backend:
+#     image:
+#       repository: myregistry/backend
+#       tag: latest
+#       source:                          # NEW: where to get updates from
+#         type: registry                 # "registry" or "stage"
+#         # For type: registry (creates Warehouse)
+#         semver: "^1.x"
+#         tagPattern: ""
+#         allowTags: ""
+#         # For type: stage (subscribes to upstream)
+#         upstream: staging
+#     port: 8080
+#     resources: small
+#     dependencies: [db]
+#     routes:
+#       - host: myapp.example.com
+#         path: /api
+
+dependencies: {}
+
+hooks:
+  pre-deploy: []
+  post-deploy: []
+
+jobs: {}
