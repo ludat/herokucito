@@ -8,11 +8,11 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: {{ .Values.stage.name }}
+  name: images
   namespace: {{ .Values.stage.project }}
 spec:
   freightCreationPolicy: Automatic
-  interval: 5m0s
+  interval: 60m
   subscriptions:
     {{- range $entry := $registryImages }}
     - image:

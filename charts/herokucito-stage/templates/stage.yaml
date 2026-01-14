@@ -21,14 +21,14 @@ spec:
     {{- if $hasRegistryImages }}
     - origin:
         kind: Warehouse
-        name: {{ .Values.stage.name }}
+        name: images
       sources:
         direct: true
     {{- end }}
     {{- range $upstream, $_ := $upstreamStages }}
     - origin:
         kind: Warehouse
-        name: {{ $upstream }}
+        name: images
       sources:
         stages:
           - {{ $upstream }}
