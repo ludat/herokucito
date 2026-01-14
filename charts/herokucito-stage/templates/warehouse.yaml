@@ -12,7 +12,6 @@ metadata:
   namespace: {{ .Values.stage.project }}
 spec:
   freightCreationPolicy: Automatic
-  interval: 1h
   subscriptions:
     {{- range $entry := $registryImages }}
     - image:
