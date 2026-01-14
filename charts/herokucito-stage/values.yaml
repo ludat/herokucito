@@ -30,7 +30,6 @@ services: {}
 #         type: registry                 # "registry" or "stage"
 #         # For type: registry (creates Warehouse)
 #         semver: "^1.x"
-#         tagPattern: ""
 #         allowTags: ""
 #         # For type: stage (subscribes to upstream)
 #         upstream: staging

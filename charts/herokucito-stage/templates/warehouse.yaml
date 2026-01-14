@@ -18,14 +18,13 @@ spec:
     - image:
         repoURL: {{ $entry.image.repository | quote }}
         {{- if $entry.image.source.semver }}
-        semverConstraint: {{ $entry.image.source.semver | quote }}
         imageSelectionStrategy: SemVer
+        semverConstraint: {{ $entry.image.source.semver | quote }}
+        strictSemvers: true
         {{- else if $entry.image.source.allowTags }}
+        imageSelectionStrategy: Lexical
         allowTags: {{ $entry.image.source.allowTags | quote }}
-        imageSelectionStrategy: Lexical
-        {{- else if $entry.image.source.tagPattern }}
-        allowTags: {{ $entry.image.source.tagPattern | quote }}
-        imageSelectionStrategy: Lexical
+        strictSemvers: false
         {{- end }}
         discoveryLimit: 20
     {{- end }}
