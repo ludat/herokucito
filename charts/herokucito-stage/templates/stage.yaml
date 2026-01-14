@@ -17,9 +17,6 @@ metadata:
   finalizers:
     - kargo.akuity.io/finalizer
 spec:
-  {{- if .Values.stage.promotion.auto }}
-  autoPromotionEnabled: true
-  {{- end }}
   requestedFreight:
     {{- if $hasRegistryImages }}
     - origin:
