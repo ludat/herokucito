@@ -21,7 +21,7 @@ spec:
       serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}
       containers:
         - name: {{ $serviceName }}
-          image: {{ include "herokucito-app.image" (dict "service" $service) | quote }}
+          image: {{ include "herokucito-app.image" (dict "service" $service "serviceName" $serviceName) | quote }}
           {{- if $service.command }}
           command:
             {{- toYaml $service.command | nindent 12 }}
