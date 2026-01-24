@@ -27,11 +27,11 @@ services: {}
 #       repository: myregistry/backend
 #       tag: latest
 #       source:
-#         type: semver                   # "semver", "lexical", "digest", or "stage"
+#         type: semver                   # "semver", "lexical", "digest", or "upstream"
 #         constraint: "^1.x"             # for type: semver - semver constraint
 #         pattern: "v*"                  # for type: lexical - tag glob pattern
 #         tag: "latest"                  # for type: digest - mutable tag to track
-#         upstream: staging              # for type: stage - upstream stage name
+#         stage: staging                 # for type: upstream - upstream stage name
 #     port: 8080
 #     resources: small
 #     dependencies: [db]
