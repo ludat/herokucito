@@ -29,14 +29,14 @@ spec:
     {{- if $hasRegistryImages }}
     - origin:
         kind: Warehouse
-        name: '{{ .Values.stage.promotion.warehouse | quote }}'
+        name: {{ $.Values.stage.promotion.warehouse | quote }}
       sources:
         direct: true
     {{- end }}
     {{- range $upstream, $_ := $upstreamStages }}
     - origin:
         kind: Warehouse
-        name: '{{ .Values.stage.promotion.warehouse | quote }}'
+        name: {{ $.Values.stage.promotion.warehouse | quote }}
       sources:
         stages:
           - {{ $upstream }}
