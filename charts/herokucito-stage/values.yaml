@@ -2,6 +2,7 @@
 stage:
   promotion:
     method: git # "git" (commit to valuesRepo) or "direct" (argocd-update with image params)
+    warehouse: "images"
   # App chart info (required when promotion.method=direct for direct image updates)
   appChart:
     repoURL: ""
