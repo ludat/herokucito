@@ -2,10 +2,15 @@
 {{- $upstreamStages := dict }}
 {{- range $serviceName, $service := .Values.services }}
 {{- if and $service.image $service.image.source }}
-{{- if eq $service.image.source.type "registry" }}
+{{- if not $service.image.source.type }}
+{{- fail (printf "service %s: source.type is required" $serviceName) }}
+{{- end }}
+{{- if has $service.image.source.type (list "semver" "lexical" "digest") }}
 {{- $hasRegistryImages = true }}
 {{- else if eq $service.image.source.type "stage" }}
 {{- $_ := set $upstreamStages $service.image.source.upstream true }}
+{{- else }}
+{{- fail (printf "service %s: invalid source.type %q, must be one of: semver, lexical, digest, stage" $serviceName $service.image.source.type) }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -26,13 +26,12 @@ services: {}
 #     image:
 #       repository: myregistry/backend
 #       tag: latest
-#       source:                          # NEW: where to get updates from
-#         type: registry                 # "registry" or "stage"
-#         # For type: registry (creates Warehouse)
-#         semver: "^1.x"
-#         allowTags: ""
-#         # For type: stage (subscribes to upstream)
-#         upstream: staging
+#       source:
+#         type: semver                   # "semver", "lexical", "digest", or "stage"
+#         constraint: "^1.x"             # for type: semver - semver constraint
+#         pattern: "v*"                  # for type: lexical - tag glob pattern
+#         tag: "latest"                  # for type: digest - mutable tag to track
+#         upstream: staging              # for type: stage - upstream stage name
 #     port: 8080
 #     resources: small
 #     dependencies: [db]
