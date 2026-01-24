@@ -18,16 +18,19 @@ spec:
         repoURL: {{ $entry.image.repository | quote }}
         {{- if eq $entry.image.source.type "semver" }}
         imageSelectionStrategy: SemVer
-        {{- if $entry.image.source.constraint }}
+          {{- if $entry.image.source.constraint }}
         constraint: {{ $entry.image.source.constraint | quote }}
-        {{- end }}
+          {{- end }}
         strictSemvers: true
+
         {{- else if eq $entry.image.source.type "lexical" }}
         imageSelectionStrategy: Lexical
         allowTags: {{ $entry.image.source.pattern | quote }}
+        strictSemvers: false # ignored by this selection strategy but argo diff complains
         {{- else if eq $entry.image.source.type "digest" }}
         imageSelectionStrategy: Digest
         constraint: {{ $entry.image.source.tag | quote }}
+        strictSemvers: false # ignored by this selection strategy but argo diff complains
         {{- end }}
         discoveryLimit: 20
     {{- end }}
