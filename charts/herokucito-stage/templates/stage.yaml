@@ -65,7 +65,7 @@ spec:
           config:
             path: ./out
             message: |
-              [{{ include "herokucito-stage.stageName" . }}] Update images
+              [{{ `${{` }} ctx.stage {{ `}}` }}] Update images
         - uses: git-push
           config:
             path: ./out

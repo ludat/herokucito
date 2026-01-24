@@ -8,7 +8,7 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: {{ include "herokucito-stage.warehouseName" . }}
+  name: {{ include "herokucito-stage.fullname" . }}
 spec:
   freightCreationPolicy: Automatic
   subscriptions:
@@ -24,7 +24,7 @@ spec:
 
         {{- else if eq $entry.source.type "lexical" }}
         imageSelectionStrategy: Lexical
-        allowTags: {{ $entry.source.pattern | replace "$branch" $.Values.variables.branch | quote }}
+        allowTags: {{ $entry.source.pattern | replace "$name" (include "herokucito-stage.fullname" $) | quote }}
         strictSemvers: false # ignored by this selection strategy but argo diff complains
         {{- else if eq $entry.source.type "digest" }}
         imageSelectionStrategy: Digest

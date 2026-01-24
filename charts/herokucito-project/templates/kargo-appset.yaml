@@ -37,7 +37,7 @@ spec:
           {{- end }}
           targetRevision: {{ .Values.kargoChart.version | quote }}
           helm:
-            releaseName: {{ `{{` }} .values.slug {{ `}}` }}
+            releaseName: '{{ `{{` }} .values.slug {{ `}}` }}'
             valueFiles:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
             values: |
