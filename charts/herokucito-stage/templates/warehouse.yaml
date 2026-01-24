@@ -1,35 +1,34 @@
 {{- $registryImages := list }}
 {{- range $serviceName, $service := .Values.services }}
 {{- if and $service.image $service.image.source (has $service.image.source.type (list "semver" "lexical" "digest")) }}
-{{- $registryImages = append $registryImages (dict "serviceName" $serviceName "image" $service.image) }}
+{{- $registryImages = append $registryImages (dict "serviceName" $serviceName "image" $service.image "source" $service.image.source) }}
 {{- end }}
 {{- end }}
 {{- if $registryImages }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: images
-  namespace: {{ .Values.stage.project }}
+  name: {{ include "herokucito-stage.warehouseName" . }}
 spec:
   freightCreationPolicy: Automatic
   subscriptions:
     {{- range $entry := $registryImages }}
     - image:
         repoURL: {{ $entry.image.repository | quote }}
-        {{- if eq $entry.image.source.type "semver" }}
+        {{- if eq $entry.source.type "semver" }}
         imageSelectionStrategy: SemVer
-          {{- if $entry.image.source.constraint }}
-        constraint: {{ $entry.image.source.constraint | quote }}
+          {{- if $entry.source.constraint }}
+        constraint: {{ $entry.source.constraint | quote }}
           {{- end }}
         strictSemvers: true
 
-        {{- else if eq $entry.image.source.type "lexical" }}
+        {{- else if eq $entry.source.type "lexical" }}
         imageSelectionStrategy: Lexical
-        allowTags: {{ $entry.image.source.pattern | quote }}
+        allowTags: {{ $entry.source.pattern | replace "$branch" $.Values.variables.branch | quote }}
         strictSemvers: false # ignored by this selection strategy but argo diff complains
-        {{- else if eq $entry.image.source.type "digest" }}
+        {{- else if eq $entry.source.type "digest" }}
         imageSelectionStrategy: Digest
-        constraint: {{ $entry.image.source.tag | quote }}
+        constraint: {{ $entry.source.tag | quote }}
         strictSemvers: false # ignored by this selection strategy but argo diff complains
         {{- end }}
         discoveryLimit: 20

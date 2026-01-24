@@ -1,24 +1,19 @@
 # Stage-specific config (injected by ApplicationSet)
 stage:
-  name: null                      # stage name (e.g., staging, production)
-  project: null                   # Kargo/ArgoCD project namespace
+  promotion:
+    method: git # "git" (commit to valuesRepo) or "direct" (argocd-update with image params)
+  # App chart info (required when promotion.method=direct for direct image updates)
+  appChart:
+    repoURL: ""
+    chart: ""
   valuesRepo:
     url: null
     branch: null
-    path: null                    # e.g., staging/rendered_values.yaml
-  promotion:
-    auto: false
-  # Additional warehouse subscriptions (e.g., shared infra/chart warehouse)
-  warehouses: []
-  # warehouses:
-  #   - name: infra
-  #     direct: true
+    path: null # e.g., staging/rendered_values.yaml
 
 # ============================================================
 # Same structure as herokucito-app values
 # ============================================================
-
-name: ""
 
 services: {}
 # services:

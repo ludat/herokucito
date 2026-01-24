@@ -37,18 +37,15 @@ spec:
           {{- end }}
           targetRevision: {{ .Values.kargoChart.version | quote }}
           helm:
+            releaseName: {{ `{{` }} .values.slug {{ `}}` }}
             valueFiles:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
             values: |
               stage:
-                name: {{ `{{` }} .values.slug {{ `}}` }}
-                project: {{ .Values.project | quote }}
                 valuesRepo:
                   url: "{{ include "herokucito-project.repoUrl" . }}"
                   branch: {{ .Values.infra.branch | quote }}
                   path: "{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
-                promotion:
-                  auto: {{ `{{` }} not (dig "production" false .) {{ `}}` }}
       syncPolicy:
         automated:
           prune: true

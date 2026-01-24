@@ -1,24 +1,27 @@
 {{- $hasRegistryImages := false }}
 {{- $upstreamStages := dict }}
+{{- $servicesWithImages := list }}
 {{- range $serviceName, $service := .Values.services }}
-{{- if and $service.image $service.image.source }}
-{{- if not $service.image.source.type }}
-{{- fail (printf "service %s: source.type is required" $serviceName) }}
-{{- end }}
-{{- if has $service.image.source.type (list "semver" "lexical" "digest") }}
-{{- $hasRegistryImages = true }}
-{{- else if eq $service.image.source.type "upstream" }}
-{{- $_ := set $upstreamStages $service.image.source.stage true }}
-{{- else }}
-{{- fail (printf "service %s: invalid source.type %q, must be one of: semver, lexical, digest, upstream" $serviceName $service.image.source.type) }}
-{{- end }}
-{{- end }}
+{{-   if and $service.image $service.image.source }}
+{{-     $source := $service.image.source }}
+{{-     if not $source.type }}
+{{-       fail (printf "service %s: source.type is required" $serviceName) }}
+{{-     end }}
+{{-     if has $source.type (list "semver" "lexical" "digest") }}
+{{-       $hasRegistryImages = true }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image) }}
+{{-     else if eq $source.type "upstream" }}
+{{-       $_ := set $upstreamStages $source.stage true }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image) }}
+{{-     else }}
+{{-       fail (printf "service %s: invalid source.type %q, must be one of: semver, lexical, digest, upstream" $serviceName $source.type) }}
+{{-     end }}
+{{-   end }}
 {{- end }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: {{ .Values.stage.name }}
-  namespace: {{ .Values.stage.project }}
+  name: {{ include "herokucito-stage.fullname" . }}
   finalizers:
     - kargo.akuity.io/finalizer
 spec:
@@ -26,14 +29,14 @@ spec:
     {{- if $hasRegistryImages }}
     - origin:
         kind: Warehouse
-        name: images
+        name: {{ include "herokucito-stage.fullname" . }}
       sources:
         direct: true
     {{- end }}
     {{- range $upstream, $_ := $upstreamStages }}
     - origin:
         kind: Warehouse
-        name: images
+        name: {{ include "herokucito-stage.fullname" $ }}
       sources:
         stages:
           - {{ $upstream }}
@@ -41,36 +44,51 @@ spec:
   promotionTemplate:
     spec:
       steps:
+        {{- if eq .Values.stage.promotion.method "git" }}
         - uses: git-clone
           config:
             repoURL: {{ .Values.stage.valuesRepo.url }}
             checkout:
               - path: ./out
                 branch: {{ .Values.stage.valuesRepo.branch }}
-        {{- range $serviceName, $service := .Values.services }}
-        {{- if and $service.image $service.image.source }}
+        {{- range $entry := $servicesWithImages }}
         - uses: yaml-update
-          as: update-{{ $serviceName }}
+          as: update-{{ $entry.name }}
           config:
             path: ./out/{{ $.Values.stage.valuesRepo.path }}
             updates:
-              - key: services.{{ $serviceName }}.image.repository
-                value: {{ `${{` }} imageFrom({{ $service.image.repository | quote }}).RepoURL {{ `}}` }}
-              - key: services.{{ $serviceName }}.image.tag
-                value: {{ `${{` }} imageFrom({{ $service.image.repository | quote }}).Tag + "@" + imageFrom({{ $service.image.repository | quote }}).Digest {{ `}}` }}
-        {{- end }}
+              - key: services.{{ $entry.name }}.image.tag
+                value: {{ `${{` }} imageFrom({{ $entry.image.repository | quote }}).Tag + "@" + imageFrom({{ $entry.image.repository | quote }}).Digest {{ `}}` }}
         {{- end }}
         - uses: git-commit
           as: commit
           config:
             path: ./out
             message: |
-              [{{ .Values.stage.name }}] Update images
+              [{{ include "herokucito-stage.stageName" . }}] Update images
         - uses: git-push
           config:
             path: ./out
         - uses: argocd-update
           config:
             apps:
-              - name: {{ .Values.stage.project }}-{{ .Values.stage.name }}
-                namespace: {{ .Values.stage.project }}
+              - name: {{ `${{` }} ctx.project {{ `}}` }}-{{ `${{` }} ctx.stage {{ `}}` }}
+                namespace: {{ `${{` }} ctx.project {{ `}}` }}
+        {{- else if eq .Values.stage.promotion.method "direct" }}
+        - uses: argocd-update
+          config:
+            apps:
+              - name: {{ `${{` }} ctx.project {{ `}}` }}-{{ `${{` }} ctx.stage {{ `}}` }}
+                namespace:  {{ `${{` }} ctx.project {{ `}}` }}
+                sources:
+                  - repoURL: {{ .Values.stage.appChart.repoURL }}
+                    chart: {{ .Values.stage.appChart.chart }}
+                    helm:
+                      images:
+                        {{- range $entry := $servicesWithImages }}
+                        - key: services.{{ $entry.name }}.image.tag
+                          value: {{ `${{` }} imageFrom({{ $entry.image.repository | quote }}).Tag + "@" + imageFrom({{ $entry.image.repository | quote }}).Digest {{ `}}` }}
+                        {{- end }}
+        {{- else }}
+        {{- fail (printf "invalid stage.promotion.method %q, must be one of: git, direct" .Values.stage.promotion.method) }}
+        {{- end }}

@@ -1,8 +1,6 @@
 # User-configurable values
 # Platform-specific settings are injected via ApplicationSet
 
-name: ""
-
 # Production mode
 production: false
 

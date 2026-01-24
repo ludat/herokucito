@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "herokucito-stage.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- .Chart.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -39,15 +39,4 @@ Selector labels
 {{- define "herokucito-stage.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "herokucito-stage.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "herokucito-stage.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "herokucito-stage.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}

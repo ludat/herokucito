@@ -1,0 +1,51 @@
+{{- if .Values.reviews.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "{{ .Values.project }}-review-app"
+  namespace: {{ .Values.project | quote }}
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - pullRequest:
+        github:
+          owner: {{ .Values.reviews.github.owner | quote }}
+          repo: {{ .Values.reviews.github.repo | quote }}
+          tokenRef:
+            secretName: {{ .Values.reviews.github.tokenSecretName | quote }}
+            key: token
+        requeueAfterSeconds: 300
+  template:
+    metadata:
+      name: "pr-{{ `{{` }} .number {{ `}}` }}"
+      annotations:
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:pr-{{ `{{` }} .number {{ `}}` }}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: {{ .Values.project | quote }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ .Values.project | quote }}
+      sources:
+        - repoURL: "{{ include "herokucito-project.repoUrl" . }}"
+          targetRevision: {{ .Values.infra.branch | quote }}
+          ref: values
+        - repoURL: {{ .Values.appChart.repoURL }}
+          chart: {{ .Values.appChart.chart }}
+          path: {{ .Values.appChart.path | quote }}
+          targetRevision: {{ .Values.appChart.version | quote }}
+          helm:
+            releaseName: pr-{{ `{{` }} .number {{ `}}` }}
+            valueFiles:
+              - "$values/{{ .Values.reviews.prValuesFile }}"
+            values: |
+              {{- include "herokucito-project.platformConfig" . | nindent 14 }}
+      syncPolicy:
+        automated:
+          enabled: true
+          prune: true
+        syncOptions:
+          - ServerSideApply=true
+{{- end }}

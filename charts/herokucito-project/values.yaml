@@ -20,10 +20,13 @@ kargoChart:
   path: ""
   version: "0.1.0"
 
-# reviews:
-#   enabled: false
-#   owner: ludat
-#   name: banana-split
+reviews:
+  enabled: false
+  github:
+    owner: ""
+    repo: ""
+    tokenSecretName: github-token
+  prValuesFile: pr.yaml  # Path to review app values in infra repo
 
 resourceQuota:
   requests.cpu: "1"
