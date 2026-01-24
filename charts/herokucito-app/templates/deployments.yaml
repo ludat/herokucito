@@ -26,19 +26,16 @@ spec:
           command:
             {{- toYaml $service.command | nindent 12 }}
           {{- end }}
-          {{- if $service.port }}
-          ports:
-            - name: http
-              containerPort: {{ $service.port }}
-              protocol: TCP
-          {{- end }}
           {{- include "herokucito-app.env" (dict "root" $root "serviceName" $serviceName "service" $service) | nindent 10 }}
           resources:
             {{- include "herokucito-app.resources" (dict "root" $root "preset" $service.resources) | nindent 12 }}
           volumeMounts:
             - name: tmp-volume
               mountPath: /tmp
-          {{- if $service.port }}
+          ports:
+            - name: http
+              containerPort: {{ $service.port | default 8080 }}
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: {{ dig "health" "path" "/" $service }}
@@ -52,7 +49,6 @@ spec:
               port: http
             timeoutSeconds: 5
             periodSeconds: 1
-          {{- end }}
       volumes:
         - name: tmp-volume
           emptyDir:
