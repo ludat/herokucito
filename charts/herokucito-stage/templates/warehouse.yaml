@@ -8,7 +8,7 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: {{ include "herokucito-stage.fullname" . }}
+  name: {{ .Values.stage.promotion.warehouse | quote }}
 spec:
   freightCreationPolicy: Automatic
   subscriptions:
