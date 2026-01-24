@@ -23,6 +23,8 @@ spec:
       name: "pr-{{ `{{` }} .values.slug {{ `}}` }}-kargo"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
+
+
     spec:
       project: {{ .Values.project | quote }}
       destination:

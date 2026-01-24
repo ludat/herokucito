@@ -16,13 +16,15 @@ spec:
             secretName: {{ .Values.reviews.github.tokenSecretName | quote }}
             key: token
         requeueAfterSeconds: 300
+        values:
+          slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
   template:
     metadata:
-      name: "pr-{{ `{{` }} .number {{ `}}` }}"
-      annotations:
-        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:pr-{{ `{{` }} .number {{ `}}` }}"
+      name: "pr-{{ `{{` }} .values.slug {{ `}}` }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
+      annotations:
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:pr-{{ `{{` }} .number {{ `}}` }}"
     spec:
       project: {{ .Values.project | quote }}
       destination:
@@ -37,7 +39,7 @@ spec:
           path: {{ .Values.appChart.path | quote }}
           targetRevision: {{ .Values.appChart.version | quote }}
           helm:
-            releaseName: pr-{{ `{{` }} .number {{ `}}` }}
+            releaseName: "{{ `{{` }} .values.slug {{ `}}` }}"
             valueFiles:
               - "$values/{{ .Values.reviews.prValuesFile }}"
             values: |
