@@ -20,7 +20,7 @@ spec:
           slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
   template:
     metadata:
-      name: "pr-{{ `{{` }} .values.slug {{ `}}` }}-kargo"
+      name: "review-{{ `{{` }} .values.slug {{ `}}` }}-kargo"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
 
@@ -39,14 +39,14 @@ spec:
           path: {{ .Values.kargoChart.path | quote }}
           targetRevision: {{ .Values.kargoChart.version | quote }}
           helm:
-            releaseName: "{{ `{{` }} .values.slug {{ `}}` }}"
+            releaseName: "review-{{ `{{` }} .values.slug {{ `}}` }}"
             valueFiles:
               - "$values/{{ .Values.reviews.prValuesFile }}"
             values: |
               stage:
                 promotion:
                   method: direct
-                  warehouse: {{ `{{` }} .number {{ `}}` }}
+                  warehouse: "review-{{ `{{` }} .values.slug {{ `}}` }}"
                 appChart:
                   repoURL: {{ .Values.appChart.repoURL }}
                   chart: {{ .Values.appChart.chart }}

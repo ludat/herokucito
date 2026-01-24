@@ -20,11 +20,11 @@ spec:
           slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
   template:
     metadata:
-      name: "pr-{{ `{{` }} .values.slug {{ `}}` }}"
+      name: "review-{{ `{{` }} .values.slug {{ `}}` }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
       annotations:
-        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:pr-{{ `{{` }} .number {{ `}}` }}"
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:review-{{ `{{` }} .values.slug {{ `}}` }}"
     spec:
       project: {{ .Values.project | quote }}
       destination:
@@ -39,7 +39,6 @@ spec:
           path: {{ .Values.appChart.path | quote }}
           targetRevision: {{ .Values.appChart.version | quote }}
           helm:
-            releaseName: "{{ `{{` }} .values.slug {{ `}}` }}"
             valueFiles:
               - "$values/{{ .Values.reviews.prValuesFile }}"
             values: |
