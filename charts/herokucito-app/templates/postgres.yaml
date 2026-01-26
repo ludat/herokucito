@@ -37,7 +37,7 @@ spec:
       postInitSQL:
         - ALTER USER app WITH SUPERUSER;
   storage:
-    {{- $sizePreset := $dep.size }}
+    {{- $sizePreset := $dep.size | default "small" }}
     {{- $storageSize := index $pgPlatform.sizePresets $sizePreset }}
     size: {{ $storageSize }}
   resources:
