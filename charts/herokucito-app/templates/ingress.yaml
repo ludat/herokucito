@@ -4,7 +4,7 @@
 {{- $hostRoutes := dict -}}
 {{- range $serviceName, $service := .Values.services }}
 {{- range $route := $service.routes }}
-{{- $host := $route.host }}
+{{- $host := include "herokucito-app.substituteVars" (dict "root" $root "value" $route.host) }}
 {{- $path := $route.path | default "/" }}
 {{- $routeEntry := dict "path" $path "serviceName" $serviceName "pathType" ($route.pathType | default "Prefix") }}
 {{- if hasKey $hostRoutes $host }}

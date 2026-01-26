@@ -40,3 +40,18 @@ Selector labels
 app.kubernetes.io/name: {{ include "herokucito-stage.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Substitute variables in a string
+Custom variables from .Values.vars:
+  $(slug) - if vars.slug is set
+  $(foo) - if vars.foo is set, etc.
+Usage: {{ include "herokucito-stage.substituteVars" (dict "root" . "value" "myvalue") }}
+*/}}
+{{- define "herokucito-stage.substituteVars" -}}
+{{- $result := .value }}
+{{- range $key, $val := .root.Values.vars }}
+{{- $result = $result | replace (printf "$(%s)" $key) $val }}
+{{- end }}
+{{- $result }}
+{{- end }}

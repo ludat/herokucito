@@ -4,6 +4,10 @@
 # Production mode
 production: false
 
+# Variables for substitution in hostnames, patterns, etc.
+# Platform injects vars.slug, but users can add their own
+vars: {}
+
 services: {}
 # services:
 #   backend:

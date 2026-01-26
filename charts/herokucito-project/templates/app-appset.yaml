@@ -59,6 +59,8 @@ spec:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
             # Platform config injected last (overrides user values)
             values: |
+              vars:
+                slug: {{ `{{` }} .values.slug {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
 
       syncPolicy:

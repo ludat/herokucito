@@ -134,3 +134,21 @@ Usage: {{ $platform := include "herokucito-app.platform" . | fromYaml }}
 {{- $platform := index .Values.platform $key | required (printf "platform.%s is required" $key) }}
 {{- toYaml $platform }}
 {{- end }}
+
+{{/*
+Substitute variables in a string
+Built-in variables (always available):
+  $(name) - the app name (from .Values.name or release name)
+  $(namespace) - the release namespace
+Custom variables from .Values.vars:
+  $(slug) - if vars.slug is set (injected by platform)
+  $(foo) - if vars.foo is set, etc.
+Usage: {{ include "herokucito-app.substituteVars" (dict "root" . "value" "myvalue") }}
+*/}}
+{{- define "herokucito-app.substituteVars" -}}
+{{- $result := .value }}
+{{- range $key, $val := .root.Values.vars }}
+{{- $result = $result | replace (printf "$(%s)" $key) $val }}
+{{- end }}
+{{- $result }}
+{{- end }}

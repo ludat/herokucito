@@ -43,6 +43,13 @@ spec:
             valueFiles:
               - "$values/{{ .Values.reviews.prValuesFile }}"
             values: |
+              vars:
+                slug: {{ `{{` }} .values.slug | quote {{ `}}` }}
+                id: {{ `{{` }} .number | quote {{ `}}` }}
+                author: {{ `{{` }} .author | quote {{ `}}` }}
+                title: {{ `{{` }} .title | quote {{ `}}` }}
+                branch: {{ `{{` }} .branch | quote {{ `}}` }}
+                sha: {{ `{{` }} .head_sha | quote {{ `}}` }}
               stage:
                 promotion:
                   method: direct

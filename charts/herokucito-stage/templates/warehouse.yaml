@@ -24,7 +24,7 @@ spec:
 
         {{- else if eq $entry.source.type "lexical" }}
         imageSelectionStrategy: Lexical
-        allowTags: {{ $entry.source.pattern | replace "$name" (include "herokucito-stage.fullname" $) | quote }}
+        allowTags: {{ include "herokucito-stage.substituteVars" (dict "root" $ "value" $entry.source.pattern) | quote }}
         strictSemvers: false # ignored by this selection strategy but argo diff complains
         {{- else if eq $entry.source.type "digest" }}
         imageSelectionStrategy: Digest

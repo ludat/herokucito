@@ -42,6 +42,13 @@ spec:
             valueFiles:
               - "$values/{{ .Values.reviews.prValuesFile }}"
             values: |
+              vars:
+                slug: {{ `{{` }} .values.slug | quote {{ `}}` }}
+                id: {{ `{{` }} .number | quote {{ `}}` }}
+                author: {{ `{{` }} .author | quote {{ `}}` }}
+                title: {{ `{{` }} .title | quote {{ `}}` }}
+                branch: {{ `{{` }} .branch | quote {{ `}}` }}
+                head_sha: {{ `{{` }} .sha | quote {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
       syncPolicy:
         automated:

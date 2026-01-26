@@ -41,6 +41,8 @@ spec:
             valueFiles:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
             values: |
+              vars:
+                slug: {{ `{{` }} .values.slug {{ `}}` }}
               stage:
                 valuesRepo:
                   url: "{{ include "herokucito-project.repoUrl" . }}"
