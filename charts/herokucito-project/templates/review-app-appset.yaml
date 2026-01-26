@@ -48,7 +48,7 @@ spec:
                 author: {{ `{{` }} .author | quote {{ `}}` }}
                 title: {{ `{{` }} .title | quote {{ `}}` }}
                 branch: {{ `{{` }} .branch | quote {{ `}}` }}
-                head_sha: {{ `{{` }} .sha | quote {{ `}}` }}
+                sha: {{ `{{` }} .head_sha | quote {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
       syncPolicy:
         automated:
