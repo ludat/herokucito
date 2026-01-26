@@ -67,4 +67,5 @@ spec:
           prune: true
         syncOptions:
           - ServerSideApply=true
+          - RespectIgnoreDifferences=true
 {{- end }}
