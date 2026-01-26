@@ -20,11 +20,11 @@ spec:
           slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
   template:
     metadata:
-      name: "review-{{ `{{` }} .values.slug {{ `}}` }}"
+      name: "{{ .Values.project }}-review-{{ `{{` }} .values.slug {{ `}}` }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
       annotations:
-        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:review-{{ `{{` }} .values.slug {{ `}}` }}"
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ .Values.project }}-review-{{ `{{` }} .values.slug {{ `}}` }}"
     spec:
       project: {{ .Values.project | quote }}
       destination:
