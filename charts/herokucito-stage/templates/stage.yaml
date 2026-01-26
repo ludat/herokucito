@@ -47,10 +47,10 @@ spec:
         {{- if eq .Values.stage.promotion.method "git" }}
         - uses: git-clone
           config:
-            repoURL: {{ .Values.stage.valuesRepo.url }}
+            repoURL: {{ .Values.stage.valuesRepo.url | quote }}
             checkout:
               - path: ./out
-                branch: {{ .Values.stage.valuesRepo.branch }}
+                branch: {{ .Values.stage.valuesRepo.branch | quote }}
         {{- range $entry := $servicesWithImages }}
         - uses: yaml-update
           as: update-{{ $entry.name }}
@@ -81,8 +81,8 @@ spec:
               - name: {{ `${{` }} ctx.project {{ `}}` }}-{{ `${{` }} ctx.stage {{ `}}` }}
                 namespace:  {{ `${{` }} ctx.project {{ `}}` }}
                 sources:
-                  - repoURL: {{ .Values.stage.appChart.repoURL }}
-                    chart: {{ .Values.stage.appChart.chart }}
+                  - repoURL: {{ .Values.stage.appChart.repoURL | quote }}
+                    chart: {{ .Values.stage.appChart.chart | quote }}
                     helm:
                       images:
                         {{- range $entry := $servicesWithImages }}
