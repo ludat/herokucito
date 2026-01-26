@@ -23,7 +23,7 @@ spec:
           maxUpdate: 1
   generators:
     - git:
-        repoURL: "{{ include "herokucito-project.repoUrl" . }}"
+        repoURL: {{ include "herokucito-project.repoUrl" . | quote }}
         revision: herokucito
         files:
           - path: "**/rendered_values.yaml"
@@ -46,11 +46,11 @@ spec:
         server: https://kubernetes.default.svc
         namespace: {{ .Values.project | quote }}
       sources:
-        - repoURL: "{{ include "herokucito-project.repoUrl" . }}"
+        - repoURL: "{{ include "herokucito-project.repoUrl" . | quote }}"
           targetRevision: {{ .Values.infra.branch | quote }}
           ref: values
-        - repoURL: {{ .Values.appChart.repoURL }}
-          chart: {{ .Values.appChart.chart }}
+        - repoURL: {{ .Values.appChart.repoURL | quote }}
+          chart: {{ .Values.appChart.chart | quote }}
           path: {{ .Values.appChart.path | quote }}
           targetRevision: {{ .Values.appChart.version | quote }}
 
@@ -60,7 +60,7 @@ spec:
             # Platform config injected last (overrides user values)
             values: |
               vars:
-                slug: {{ `{{` }} .values.slug {{ `}}` }}
+                slug: {{ `{{` }} .values.slug | quote {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
 
       syncPolicy:

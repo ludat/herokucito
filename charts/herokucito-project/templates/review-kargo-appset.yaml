@@ -34,8 +34,8 @@ spec:
         - repoURL: "{{ include "herokucito-project.repoUrl" . }}"
           targetRevision: {{ .Values.infra.branch | quote }}
           ref: values
-        - repoURL: {{ .Values.kargoChart.repoURL }}
-          chart: {{ .Values.kargoChart.chart }}
+        - repoURL: {{ .Values.kargoChart.repoURL | quote }}
+          chart: {{ .Values.kargoChart.chart | quote }}
           path: {{ .Values.kargoChart.path | quote }}
           targetRevision: {{ .Values.kargoChart.version | quote }}
           helm:
@@ -55,8 +55,8 @@ spec:
                   method: direct
                   warehouse: "review-{{ `{{` }} .values.slug {{ `}}` }}"
                 appChart:
-                  repoURL: {{ .Values.appChart.repoURL }}
-                  chart: {{ .Values.appChart.chart }}
+                  repoURL: {{ .Values.appChart.repoURL | quote }}
+                  chart: {{ .Values.appChart.chart | quote }}
 
       # ignoreDifferences:
       #   - group: argoproj.io
