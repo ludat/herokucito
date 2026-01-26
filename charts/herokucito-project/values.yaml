@@ -26,7 +26,7 @@ reviews:
     owner: ""
     repo: ""
     tokenSecretName: github-token
-  prValuesFile: pr.yaml  # Path to review app values in infra repo
+  prValuesFile: pr.yaml # Path to review app values in infra repo
 
 resourceQuota:
   requests.cpu: "1"
@@ -68,5 +68,11 @@ platformConfig:
     defaultVersion: "16"
     sizePresets:
       small: 5Gi
-      medium: 5Gi
-      large: 5Gi
+    resourcePresets:
+      small:
+        limits:
+          cpu: "1"
+          memory: 516Mi
+        requests:
+          cpu: 60m
+          memory: 128Mi

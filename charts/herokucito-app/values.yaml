@@ -68,6 +68,14 @@ platform:
         small: 5Gi
         medium: 10Gi
         large: 20Gi
+      resourcePresets:
+        small:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
       backup:
         endpointURL: https://....r2.cloudflarestorage.com
         destinationPath: s3://cloudnativepg-backups
