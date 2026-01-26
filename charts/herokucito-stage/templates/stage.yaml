@@ -82,7 +82,9 @@ spec:
                 namespace:  {{ `${{` }} ctx.project {{ `}}` }}
                 sources:
                   - repoURL: {{ .Values.stage.appChart.repoURL | quote }}
+                    {{- if .Values.stage.appChart.chart }}
                     chart: {{ .Values.stage.appChart.chart | quote }}
+                    {{- end }}
                     helm:
                       images:
                         {{- range $entry := $servicesWithImages }}
