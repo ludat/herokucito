@@ -40,6 +40,9 @@ spec:
     {{- $sizePreset := $dep.size | default "small" }}
     {{- $storageSize := index $pgPlatform.sizePresets $sizePreset }}
     size: {{ $storageSize }}
+    {{- if not $production -}}
+    storageClass: juicefs-cheap-shared
+    {{- end -}}
   resources:
     {{- $resources := index $pgPlatform.resourcePresets $sizePreset }}
     {{- toYaml $resources | nindent 4 }}
