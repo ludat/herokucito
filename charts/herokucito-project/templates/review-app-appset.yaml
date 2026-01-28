@@ -20,6 +20,7 @@ spec:
           slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
   ignoreApplicationDifferences:
     - jqPathExpressions:
+        - .spec.sources[].helm.parameters
         - .spec.source.helm.parameters
     - jsonPointers:
         - /spec/syncPolicy
