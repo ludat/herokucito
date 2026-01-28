@@ -18,6 +18,11 @@ spec:
         requeueAfterSeconds: 300
         values:
           slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
+  ignoreApplicationDifferences:
+    - jqPathExpressions:
+        - .spec.source.helm.parameters
+    - jsonPointers:
+        - /spec/syncPolicy
   template:
     metadata:
       name: "{{ .Values.project }}-review-{{ `{{` }} .values.slug {{ `}}` }}"
