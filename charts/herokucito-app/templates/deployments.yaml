@@ -37,15 +37,13 @@ spec:
               containerPort: {{ $service.port | default 8080 }}
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: {{ dig "health" "path" "/" $service }}
+            tcpSocket:
               port: http
             timeoutSeconds: 4
             failureThreshold: 3
             periodSeconds: 5
           startupProbe:
-            httpGet:
-              path: {{ dig "health" "path" "/" $service }}
+            tcpSocket:
               port: http
             failureThreshold: 60
             periodSeconds: 1
