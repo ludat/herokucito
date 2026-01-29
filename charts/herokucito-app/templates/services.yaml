@@ -1,7 +1,6 @@
 {{- $root := . -}}
 {{- $appName := include "herokucito-app.fullname" . -}}
 {{- range $serviceName, $service := .Values.services }}
-{{- if $service.port }}
 ---
 apiVersion: v1
 kind: Service
@@ -18,5 +17,4 @@ spec:
       name: http
   selector:
     {{- include "herokucito-app.serviceSelectorLabels" (dict "root" $root "serviceName" $serviceName) | nindent 4 }}
-{{- end }}
 {{- end }}
