@@ -29,6 +29,12 @@ spec:
           - path: "**/rendered_values.yaml"
         values:
           slug: '{{ `{{` }} .path.path | trimPrefix "" | slugify 23 false {{ `}}` }}'
+  ignoreApplicationDifferences:
+    - jqPathExpressions:
+        - .spec.sources[].helm.parameters
+        - .spec.source.helm.parameters
+    - jsonPointers:
+        - /spec/syncPolicy
   template:
     metadata:
       # TODO(ludat) I'd like to remove this prefix now since it's not useful if the app is inside it's own namespace
