@@ -87,10 +87,8 @@ Usage: {{ include "herokucito-app.env" (dict "root" . "serviceName" "backend" "s
 {{- $service := .service }}
 {{- $appName := include "herokucito-app.fullname" $root }}
 env:
-{{- if $service.port }}
   - name: PORT
-    value: {{ $service.port | quote }}
-{{- end }}
+    value: {{ $service.port | default "8080" | quote }}
 {{- range $key, $value := $service.env }}
   - name: {{ $key }}
     value: {{ $value | quote }}
