@@ -29,14 +29,14 @@ spec:
     {{- if $hasRegistryImages }}
     - origin:
         kind: Warehouse
-        name: {{ $.Values.stage.promotion.warehouse | quote }}
+        name: {{ include "herokucito-stage.promotionWarehouse" $ | quote }}
       sources:
         direct: true
     {{- end }}
     {{- range $upstream, $_ := $upstreamStages }}
     - origin:
         kind: Warehouse
-        name: {{ $.Values.stage.promotion.warehouse | quote }}
+        name: {{ include "herokucito-stage.promotionWarehouse" $ | quote }}
       sources:
         stages:
           - {{ $upstream }}
@@ -44,7 +44,7 @@ spec:
   promotionTemplate:
     spec:
       steps:
-        {{- if eq .Values.stage.promotion.method "git" }}
+        {{- if eq (include "herokucito-stage.promotionMethod" .) "git" }}
         - uses: git-clone
           config:
             repoURL: {{ .Values.stage.valuesRepo.url | quote }}
@@ -74,7 +74,7 @@ spec:
             apps:
               - name: {{ `${{` }} ctx.project {{ `}}` }}-{{ `${{` }} ctx.stage {{ `}}` }}
                 namespace: {{ `${{` }} ctx.project {{ `}}` }}
-        {{- else if eq .Values.stage.promotion.method "direct" }}
+        {{- else if eq (include "herokucito-stage.promotionMethod" .) "direct" }}
         - uses: argocd-update
           config:
             apps:
@@ -92,5 +92,5 @@ spec:
                           value: {{ `${{` }} imageFrom({{ $entry.image.repository | quote }}).Tag + "@" + imageFrom({{ $entry.image.repository | quote }}).Digest {{ `}}` }}
                         {{- end }}
         {{- else }}
-        {{- fail (printf "invalid stage.promotion.method %q, must be one of: git, direct" .Values.stage.promotion.method) }}
+        {{- fail (printf "invalid stage.promotion.method %q, must be one of: git, direct" (include "herokucito-stage.promotionMethod" .)) }}
         {{- end }}

@@ -43,7 +43,14 @@ spec:
             values: |
               vars:
                 slug: {{ `{{` }} .values.slug {{ `}}` }}
+              projectDefaults:
+                promotion:
+                  method: {{ .Values.defaultPromotion.method | quote }}
+                  warehouse: {{ .Values.defaultPromotion.warehouse | quote }}
               stage:
+                appChart:
+                  repoURL: {{ .Values.appChart.repoURL | quote }}
+                  chart: {{ .Values.appChart.chart | quote }}
                 valuesRepo:
                   url: "{{ include "herokucito-project.repoUrl" . }}"
                   branch: {{ .Values.infra.branch | quote }}

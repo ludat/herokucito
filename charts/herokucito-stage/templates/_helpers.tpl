@@ -55,3 +55,35 @@ Usage: {{ include "herokucito-stage.substituteVars" (dict "root" . "value" "myva
 {{- end }}
 {{- $result }}
 {{- end }}
+
+{{/*
+Get effective promotion method with fallback:
+1. stage.promotion.method (per-stage override)
+2. projectDefaults.promotion.method (project-level default)
+3. "git" (chart default)
+*/}}
+{{- define "herokucito-stage.promotionMethod" -}}
+{{- if .Values.stage.promotion.method }}
+{{- .Values.stage.promotion.method }}
+{{- else if .Values.projectDefaults.promotion.method }}
+{{- .Values.projectDefaults.promotion.method }}
+{{- else }}
+{{- "git" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Get effective promotion warehouse with fallback:
+1. stage.promotion.warehouse (per-stage override)
+2. projectDefaults.promotion.warehouse (project-level default)
+3. "images" (chart default)
+*/}}
+{{- define "herokucito-stage.promotionWarehouse" -}}
+{{- if .Values.stage.promotion.warehouse }}
+{{- .Values.stage.promotion.warehouse }}
+{{- else if .Values.projectDefaults.promotion.warehouse }}
+{{- .Values.projectDefaults.promotion.warehouse }}
+{{- else }}
+{{- "images" }}
+{{- end }}
+{{- end }}

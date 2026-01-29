@@ -57,21 +57,10 @@ spec:
                 sha: {{ `{{` }} .head_sha | quote {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
 
-      ignoreDifferences:
-        - group: argoproj.io
-          kind: Application
-          # this is hardocded because the ignoring using jq doesn't quite work for arrays
-          jsonPointers:
-            - /spec/sources/1/targetRevision
-            - /spec/sources/1/helm/parameters
-          # jqPathExpressions:
-          #   - .spec.sources[] | select(.chart == "herokucito-web") | .targetRevision
-          #   - .spec.sources[] | select(.chart == "herokucito-web") | .helm.parameters[] | select(.name == "image.tag") | .value
       syncPolicy:
         automated:
           enabled: true
           prune: true
         syncOptions:
           - ServerSideApply=true
-          - RespectIgnoreDifferences=true
 {{- end }}

@@ -20,6 +20,11 @@ kargoChart:
   path: ""
   version: "0.1.0"
 
+# Promotion strategy defaults (can be overridden per-stage in rendered_values.yaml)
+defaultPromotion:
+  method: git  # "git" (commit to valuesRepo) or "direct" (argocd-update with image params)
+  warehouse: images
+
 reviews:
   enabled: false
   github:
