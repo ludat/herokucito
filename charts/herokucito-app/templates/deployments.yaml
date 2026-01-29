@@ -47,8 +47,9 @@ spec:
             httpGet:
               path: {{ dig "health" "path" "/" $service }}
               port: http
-            timeoutSeconds: 5
+            failureThreshold: 60
             periodSeconds: 1
+            timeoutSeconds: 5
       volumes:
         - name: tmp-volume
           emptyDir:
