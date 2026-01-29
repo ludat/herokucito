@@ -4,14 +4,14 @@ vars: {}
 # Project-level defaults (injected by ApplicationSet, can be overridden per-stage)
 projectDefaults:
   promotion:
-    method: "" # empty means use chart default (git)
-    warehouse: "" # empty means use chart default (images)
+    method: null # empty means use chart default (git)
+    warehouse: null # empty means use chart default (images)
 
 # Stage-specific config (injected by ApplicationSet)
 stage:
   promotion:
-    method: "" # if empty, uses projectDefaults.promotion.method, then falls back to "git"
-    warehouse: "" # if empty, uses projectDefaults.promotion.warehouse, then falls back to "images"
+    method: null # if empty, uses projectDefaults.promotion.method, then falls back to "git"
+    warehouse: null # if empty, uses projectDefaults.promotion.warehouse, then falls back to "images"
   # App chart info (required when promotion.method=direct for direct image updates)
   appChart:
     repoURL: ""
