@@ -8,6 +8,8 @@ metadata:
   name: {{ $appName }}-{{ $serviceName }}
   labels:
     {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $serviceName) | nindent 4 }}
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   selector:
     matchLabels:
