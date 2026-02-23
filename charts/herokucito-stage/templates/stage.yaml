@@ -4,9 +4,6 @@
 {{- range $serviceName, $service := .Values.services }}
 {{-   if and $service.image $service.image.source }}
 {{-     $source := $service.image.source }}
-{{-     if not $source.type }}
-{{-       fail (printf "service %s: source.type is required" $serviceName) }}
-{{-     end }}
 {{-     if has $source.type (list "semver" "lexical" "digest") }}
 {{-       $hasRegistryImages = true }}
 {{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image) }}
