@@ -83,3 +83,20 @@ tests:
               - ./notify.sh
     asserts:
       - matchSnapshot: {}
+
+  - it: renders hooks with secrets
+    set:
+      hooks:
+        pre-deploy:
+          - name: migrate
+            image:
+              repository: myregistry/backend
+              tag: v1.0.0
+            secrets:
+              - my-app-secrets
+              - my-api-keys
+            command:
+              - ./migrate.sh
+        post-deploy: []
+    asserts:
+      - matchSnapshot: {}
