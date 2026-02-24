@@ -11,7 +11,26 @@ permissions:
   packages: write
 
 jobs:
+  test:
+    strategy:
+      matrix:
+        chart:
+          - herokucito-project
+          - herokucito-stage
+          - herokucito-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install helm-unittest
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git
+
+      - name: Run tests
+        run: helm unittest charts/${{ matrix.chart }}
+
   release:
+    needs: test
     strategy:
       matrix:
         chart:
