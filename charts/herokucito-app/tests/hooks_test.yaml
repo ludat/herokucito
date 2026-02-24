@@ -1,0 +1,53 @@
+suite: hooks
+templates:
+  - templates/hooks.yaml
+tests:
+  - it: renders hooks for pre-deploy and post-deploy using the default from a service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          resources: small
+      hooks:
+        pre-deploy:
+          - name: migrate
+            service: backend
+            command:
+              - ./migrate.sh
+        post-deploy:
+          - name: notify
+            service: backend
+            command:
+              - ./notify.sh
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders hooks for pre-deploy and post-deploy using hardcoded images
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          resources: small
+      hooks:
+        pre-deploy:
+          - name: migrate
+            image:
+              repository: myregistry/backend
+              tag: v1.0.0
+            command:
+              - ./migrate.sh
+        post-deploy:
+          - name: notify
+            image:
+              repository: myregistry/backend
+              tag: v1.0.0
+            command:
+              - ./notify.sh
+    asserts:
+      - matchSnapshot: {}

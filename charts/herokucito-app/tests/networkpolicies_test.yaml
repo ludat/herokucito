@@ -1,0 +1,15 @@
+suite: networkpolicies
+templates:
+  - templates/networkpolicies.yaml
+tests:
+  - it: renders networkpolicies without postgres
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders networkpolicies with postgres dependency
+    set:
+      dependencies:
+        db:
+          type: postgres
+    asserts:
+      - matchSnapshot: {}

@@ -1,0 +1,62 @@
+renders postgres in non-production mode:
+  1: |
+    apiVersion: postgresql.cnpg.io/v1
+    kind: Cluster
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-20"
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-db
+    spec:
+      bootstrap:
+        initdb:
+          database: appdb
+          owner: app
+          postInitSQL:
+            - ALTER USER app WITH SUPERUSER;
+      enablePDB: false
+      instances: 1
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      storage:
+        size: 5Gi
+        storageClass: juicefs-cheap-shared
+renders postgres in production mode:
+  1: |
+    apiVersion: postgresql.cnpg.io/v1
+    kind: Cluster
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=confirm
+        argocd.argoproj.io/sync-wave: "-20"
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-db
+    spec:
+      bootstrap:
+        initdb:
+          database: appdb
+          owner: app
+          postInitSQL:
+            - ALTER USER app WITH SUPERUSER;
+      enablePDB: true
+      instances: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      storage:
+        size: 5Gi

@@ -1,0 +1,21 @@
+suite: cronjobs
+templates:
+  - templates/cronjobs.yaml
+tests:
+  - it: renders cronjob referencing a service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          resources: small
+      jobs:
+        cleanup:
+          schedule: "0 2 * * *"
+          service: backend
+          command:
+            - ./cleanup.sh
+    asserts:
+      - matchSnapshot: {}

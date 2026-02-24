@@ -1,0 +1,29 @@
+suite: deployments
+templates:
+  - templates/deployments.yaml
+tests:
+  - it: renders deployment for a single service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          resources: small
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders deployment with custom command
+    set:
+      services:
+        worker:
+          image:
+            repository: myregistry/worker
+            tag: v2.0.0
+          port: 9090
+          resources: medium
+          command:
+            - ./run-worker
+    asserts:
+      - matchSnapshot: {}

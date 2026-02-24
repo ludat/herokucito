@@ -1,0 +1,22 @@
+suite: postgres
+templates:
+  - templates/postgres.yaml
+tests:
+  - it: renders postgres in non-production mode
+    set:
+      dependencies:
+        db:
+          type: postgres
+          size: small
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders postgres in production mode
+    set:
+      production: true
+      dependencies:
+        db:
+          type: postgres
+          size: small
+    asserts:
+      - matchSnapshot: {}

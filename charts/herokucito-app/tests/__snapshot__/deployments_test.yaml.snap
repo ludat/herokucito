@@ -1,0 +1,138 @@
+renders deployment for a single service:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        reloader.stakater.com/auto: "true"
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME-backend
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: backend
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-backend
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/component: server
+          app.kubernetes.io/instance: RELEASE-NAME-backend
+          app.kubernetes.io/name: backend
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/component: server
+            app.kubernetes.io/instance: RELEASE-NAME-backend
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: backend
+            app.kubernetes.io/part-of: RELEASE-NAME
+            helm.sh/chart: herokucito-app-0.1.0
+        spec:
+          containers:
+            - env:
+                - name: PORT
+                  value: "8080"
+              image: myregistry/backend:v1.0.0
+              livenessProbe:
+                failureThreshold: 3
+                periodSeconds: 5
+                tcpSocket:
+                  port: http
+                timeoutSeconds: 4
+              name: backend
+              ports:
+                - containerPort: 8080
+                  name: http
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
+                requests:
+                  cpu: 20m
+                  memory: 64Mi
+              startupProbe:
+                failureThreshold: 60
+                periodSeconds: 1
+                tcpSocket:
+                  port: http
+                timeoutSeconds: 5
+              volumeMounts:
+                - mountPath: /tmp
+                  name: tmp-volume
+          serviceAccountName: RELEASE-NAME
+          volumes:
+            - emptyDir:
+                medium: Memory
+                sizeLimit: 100Mi
+              name: tmp-volume
+renders deployment with custom command:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        reloader.stakater.com/auto: "true"
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME-worker
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: worker
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-worker
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/component: server
+          app.kubernetes.io/instance: RELEASE-NAME-worker
+          app.kubernetes.io/name: worker
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/component: server
+            app.kubernetes.io/instance: RELEASE-NAME-worker
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: worker
+            app.kubernetes.io/part-of: RELEASE-NAME
+            helm.sh/chart: herokucito-app-0.1.0
+        spec:
+          containers:
+            - command:
+                - ./run-worker
+              env:
+                - name: PORT
+                  value: "9090"
+              image: myregistry/worker:v2.0.0
+              livenessProbe:
+                failureThreshold: 3
+                periodSeconds: 5
+                tcpSocket:
+                  port: http
+                timeoutSeconds: 4
+              name: worker
+              ports:
+                - containerPort: 9090
+                  name: http
+                  protocol: TCP
+              resources:
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              startupProbe:
+                failureThreshold: 60
+                periodSeconds: 1
+                tcpSocket:
+                  port: http
+                timeoutSeconds: 5
+              volumeMounts:
+                - mountPath: /tmp
+                  name: tmp-volume
+          serviceAccountName: RELEASE-NAME
+          volumes:
+            - emptyDir:
+                medium: Memory
+                sizeLimit: 100Mi
+              name: tmp-volume

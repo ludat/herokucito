@@ -1,0 +1,30 @@
+renders ingress with routes:
+  1: |
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-myapp-example-com
+    spec:
+      ingressClassName: nginx
+      rules:
+        - host: myapp.example.com
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: RELEASE-NAME-backend
+                    port:
+                      name: http
+                path: /api
+                pathType: Prefix
+      tls:
+        - hosts:
+            - myapp.example.com
+          secretName: RELEASE-NAME-myapp-example-com-tls

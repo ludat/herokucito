@@ -1,0 +1,247 @@
+renders networkpolicies with postgres dependency:
+  1: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-default-deny
+    spec:
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+        - Egress
+  2: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-dns
+    spec:
+      egress:
+        - ports:
+            - port: 53
+              protocol: UDP
+            - port: 53
+              protocol: TCP
+          to:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+  3: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-ingress
+    spec:
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: server
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+  4: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-internal
+    spec:
+      egress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: RELEASE-NAME
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: RELEASE-NAME
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+        - Egress
+  5: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-external
+    spec:
+      egress:
+        - to:
+            - ipBlock:
+                cidr: 0.0.0.0/0
+                except:
+                  - 10.0.0.0/8
+                  - 172.16.0.0/12
+                  - 192.168.0.0/16
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+  6: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-postgres
+    spec:
+      egress:
+        - ports:
+            - port: 5432
+              protocol: TCP
+          to:
+            - podSelector:
+                matchLabels:
+                  cnpg.io/cluster: RELEASE-NAME-db
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+renders networkpolicies without postgres:
+  1: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-default-deny
+    spec:
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+        - Egress
+  2: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-dns
+    spec:
+      egress:
+        - ports:
+            - port: 53
+              protocol: UDP
+            - port: 53
+              protocol: TCP
+          to:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+  3: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-ingress
+    spec:
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/component: server
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+  4: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-internal
+    spec:
+      egress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: RELEASE-NAME
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: RELEASE-NAME
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Ingress
+        - Egress
+  5: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.1.0
+      name: RELEASE-NAME-allow-external
+    spec:
+      egress:
+        - to:
+            - ipBlock:
+                cidr: 0.0.0.0/0
+                except:
+                  - 10.0.0.0/8
+                  - 172.16.0.0/12
+                  - 192.168.0.0/16
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
