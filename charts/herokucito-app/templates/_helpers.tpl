@@ -97,12 +97,42 @@ env:
 {{- range $depName := $service.dependencies }}
 {{- $dep := index $root.Values.dependencies $depName }}
 {{- if eq $dep.type "postgres" }}
-  # FIXME: this should be at least parameterized
+  # FIXME: this a temporary hack for banana-split
   - name: BANANASPLIT_DATABASE_URL
     valueFrom:
       secretKeyRef:
         name: {{ $appName }}-{{ $depName }}-app
         key: uri
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: uri
+  - name: PGHOST
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: host
+  - name: PGPORT
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: port
+  - name: PGDATABASE
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: dbname
+  - name: PGUSER
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: user
+  - name: PGPASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ $appName }}-{{ $depName }}-app
+        key: password
 {{- end }}
 {{- end }}
 {{- if $service.secrets }}

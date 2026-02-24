@@ -51,3 +51,35 @@ tests:
               - ./notify.sh
     asserts:
       - matchSnapshot: {}
+
+  - it: renders hooks for pre-deploy and post-deploy with dependencies
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          resources: small
+      dependencies:
+        pg:
+          type: postgres
+      hooks:
+        pre-deploy:
+          - name: migrate
+            image:
+              repository: myregistry/backend
+              tag: v1.0.0
+            dependencies: [pg]
+            command:
+              - ./migrate.sh
+        post-deploy:
+          - name: notify
+            image:
+              repository: myregistry/backend
+              tag: v1.0.0
+            dependencies: [pg]
+            command:
+              - ./notify.sh
+    asserts:
+      - matchSnapshot: {}

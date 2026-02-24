@@ -35,9 +35,7 @@ spec:
           image: {{ include "herokucito-app.image" (dict "service" $service "serviceName" $hook.name) | quote }}
           command:
             {{- toYaml $hook.command | nindent 12 }}
-          {{- if $hasService }}
-          {{- include "herokucito-app.env" (dict "root" $root "serviceName" $hook.service "service" $service) | nindent 10 }}
-          {{- end }}
+          {{- include "herokucito-app.env" (dict "root" $root "serviceName" ($hook.service | default $hook.name) "service" $service) | nindent 10 }}
           resources:
             {{- include "herokucito-app.resources" (dict "root" $root "preset" ($hook.resources | default $service.resources)) | nindent 12 }}
 {{- end }}
@@ -76,9 +74,7 @@ spec:
           image: {{ include "herokucito-app.image" (dict "service" $service "serviceName" $hook.name) | quote }}
           command:
             {{- toYaml $hook.command | nindent 12 }}
-          {{- if $hasService }}
-          {{- include "herokucito-app.env" (dict "root" $root "serviceName" $hook.service "service" $service) | nindent 10 }}
-          {{- end }}
+          {{- include "herokucito-app.env" (dict "root" $root "serviceName" ($hook.service | default $hook.name) "service" $service) | nindent 10 }}
           resources:
             {{- include "herokucito-app.resources" (dict "root" $root "preset" ($hook.resources | default $service.resources)) | nindent 12 }}
 {{- end }}
