@@ -49,5 +49,18 @@ dependencies: {}
 hooks:
   pre-deploy: []
   post-deploy: []
+# hooks:
+#   pre-deploy:
+#     - name: migrate
+#       service: backend              # uses service's image
+#       command: ["./migrate.sh"]
+#     - name: setup
+#       image:                         # or its own image
+#         repository: myregistry/setup
+#         tag: latest
+#         source:
+#           type: semver
+#           constraint: "^1.x"
+#       command: ["./setup.sh"]
 
 jobs: {}

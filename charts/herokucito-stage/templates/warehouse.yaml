@@ -4,6 +4,13 @@
 {{- $registryImages = append $registryImages (dict "serviceName" $serviceName "image" $service.image "source" $service.image.source) }}
 {{- end }}
 {{- end }}
+{{- range $phase := list "pre-deploy" "post-deploy" }}
+{{- range $idx, $hook := (index $.Values.hooks $phase) }}
+{{- if and $hook.image $hook.image.source (has $hook.image.source.type (list "semver" "lexical" "digest")) }}
+{{- $registryImages = append $registryImages (dict "serviceName" (printf "hook-%s-%s" $phase $hook.name) "image" $hook.image "source" $hook.image.source) }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- if $registryImages }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse

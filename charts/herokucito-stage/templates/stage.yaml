@@ -6,14 +6,30 @@
 {{-     $source := $service.image.source }}
 {{-     if has $source.type (list "semver" "lexical" "digest") }}
 {{-       $hasRegistryImages = true }}
-{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image) }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image "key" (printf "services.%s.image.tag" $serviceName)) }}
 {{-     else if eq $source.type "upstream" }}
 {{-       $_ := set $upstreamStages $source.stage true }}
-{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image) }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" $serviceName "image" $service.image "key" (printf "services.%s.image.tag" $serviceName)) }}
 {{-     else }}
 {{-       fail (printf "service %s: invalid source.type %q, must be one of: semver, lexical, digest, upstream" $serviceName $source.type) }}
 {{-     end }}
 {{-   end }}
+{{- end }}
+{{- range $phase := list "pre-deploy" "post-deploy" }}
+{{- range $idx, $hook := (index $.Values.hooks $phase) }}
+{{-   if and $hook.image $hook.image.source }}
+{{-     $source := $hook.image.source }}
+{{-     if has $source.type (list "semver" "lexical" "digest") }}
+{{-       $hasRegistryImages = true }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" (printf "hook-%s-%s" $phase $hook.name) "image" $hook.image "key" (printf "hooks.%s[%d].image.tag" $phase (int $idx))) }}
+{{-     else if eq $source.type "upstream" }}
+{{-       $_ := set $upstreamStages $source.stage true }}
+{{-       $servicesWithImages = append $servicesWithImages (dict "name" (printf "hook-%s-%s" $phase $hook.name) "image" $hook.image "key" (printf "hooks.%s[%d].image.tag" $phase (int $idx))) }}
+{{-     else }}
+{{-       fail (printf "hook %s/%s: invalid source.type %q, must be one of: semver, lexical, digest, upstream" $phase $hook.name $source.type) }}
+{{-     end }}
+{{-   end }}
+{{- end }}
 {{- end }}
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -54,7 +70,7 @@ spec:
           config:
             path: ./out/{{ $.Values.stage.valuesRepo.path }}
             updates:
-              - key: services.{{ $entry.name }}.image.tag
+              - key: {{ $entry.key }}
                 value: {{ `${{` }} imageFrom({{ $entry.image.repository | quote }}).Tag + "@" + imageFrom({{ $entry.image.repository | quote }}).Digest {{ `}}` }}
         {{- end }}
         - uses: git-commit
@@ -85,7 +101,7 @@ spec:
                     helm:
                       images:
                         {{- range $entry := $servicesWithImages }}
-                        - key: services.{{ $entry.name }}.image.tag
+                        - key: {{ $entry.key }}
                           value: {{ `${{` }} imageFrom({{ $entry.image.repository | quote }}).Tag + "@" + imageFrom({{ $entry.image.repository | quote }}).Digest {{ `}}` }}
                         {{- end }}
         {{- else }}
