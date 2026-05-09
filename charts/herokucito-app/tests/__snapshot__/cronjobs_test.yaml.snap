@@ -7,7 +7,7 @@ renders cronjob referencing a service:
         app.kubernetes.io/component: cronjob
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.0
+        helm.sh/chart: herokucito-app-0.2.1
       name: RELEASE-NAME-job-cleanup
     spec:
       concurrencyPolicy: Forbid
@@ -20,7 +20,7 @@ renders cronjob referencing a service:
                 app.kubernetes.io/component: cronjob
                 app.kubernetes.io/managed-by: Helm
                 app.kubernetes.io/part-of: RELEASE-NAME
-                helm.sh/chart: herokucito-app-0.2.0
+                helm.sh/chart: herokucito-app-0.2.1
             spec:
               containers:
                 - command:

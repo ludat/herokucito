@@ -10,7 +10,7 @@ renders deployment for a single service:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.0
+        helm.sh/chart: herokucito-app-0.2.1
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -26,7 +26,7 @@ renders deployment for a single service:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.0
+            helm.sh/chart: herokucito-app-0.2.1
         spec:
           containers:
             - env:
@@ -78,7 +78,7 @@ renders deployment with custom command:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: worker
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.0
+        helm.sh/chart: herokucito-app-0.2.1
       name: RELEASE-NAME-worker
     spec:
       selector:
@@ -94,7 +94,7 @@ renders deployment with custom command:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: worker
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.0
+            helm.sh/chart: herokucito-app-0.2.1
         spec:
           containers:
             - command:
@@ -148,7 +148,7 @@ renders deployment with pg:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.0
+        helm.sh/chart: herokucito-app-0.2.1
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -164,7 +164,7 @@ renders deployment with pg:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.0
+            helm.sh/chart: herokucito-app-0.2.1
         spec:
           containers:
             - env:
@@ -251,7 +251,7 @@ renders deployment with secrets:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.0
+        helm.sh/chart: herokucito-app-0.2.1
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -267,7 +267,7 @@ renders deployment with secrets:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.0
+            helm.sh/chart: herokucito-app-0.2.1
         spec:
           containers:
             - env:
