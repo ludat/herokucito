@@ -2,5 +2,5 @@ apiVersion: v2
 name: herokucito-app
 description: A Helm chart for deploying multi-service applications with platform dependencies
 type: application
-version: 0.2.0
+version: 0.2.1
 appVersion: "0.0.0"

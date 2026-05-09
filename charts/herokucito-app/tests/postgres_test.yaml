@@ -20,3 +20,36 @@ tests:
           size: small
     asserts:
       - matchSnapshot: {}
+
+  - it: fails when production=true but endpointURL is missing
+    set:
+      production: true
+      dependencies:
+        db:
+          type: postgres
+      platform.x.postgres.backup.endpointURL: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "platform.postgres.backup.endpointURL is required when production=true"
+
+  - it: fails when production=true but destinationPath is missing
+    set:
+      production: true
+      dependencies:
+        db:
+          type: postgres
+      platform.x.postgres.backup.destinationPath: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "platform.postgres.backup.destinationPath is required when production=true"
+
+  - it: fails when production=true but s3Credentials.secretName is missing
+    set:
+      production: true
+      dependencies:
+        db:
+          type: postgres
+      platform.x.postgres.backup.s3Credentials.secretName: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "platform.postgres.backup.s3Credentials.secretName is required when production=true"

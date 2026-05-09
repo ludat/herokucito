@@ -5,6 +5,7 @@
 {{- range $depName, $dep := .Values.dependencies }}
 {{- if eq $dep.type "postgres" }}
 {{- $clusterName := printf "%s-%s" $appName $depName }}
+{{- $storeName := printf "%s-store" $clusterName }}
 {{- $pgPlatform := $platform.postgres }}
 {{- /* Production defaults: ha=true, failsafe=true, backups=true */ -}}
 {{- $ha := $production }}
@@ -46,17 +47,15 @@ spec:
   resources:
     {{- $resources := index $pgPlatform.resourcePresets $sizePreset }}
     {{- toYaml $resources | nindent 4 }}
-{{/* No backups for now */}}
-{{/*
-  {{- if $dep.backups }}
+  {{- if $backups }}
   plugins:
     - enabled: true
       name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: {{ $storeName }}
+        barmanObjectName: {{ $storeName | quote }}
   {{- end }}
-{{- if $dep.backups }}
+{{- if $backups }}
 ---
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
@@ -68,25 +67,15 @@ metadata:
     argocd.argoproj.io/sync-wave: "-20"
 spec:
   configuration:
-    {{- with $pgPlatform.backup.endpointURL }}
-    endpointURL: {{ . }}
-    {{- end }}
-    destinationPath: {{ printf "%s/%s" $pgPlatform.backup.destinationPath $appName | quote }}
-    {{- if $pgPlatform.backup.s3Credentials }}
+    endpointURL: {{ required "platform.postgres.backup.endpointURL is required when production=true" $pgPlatform.backup.endpointURL }}
+    destinationPath: {{ printf "%s/%s" (required "platform.postgres.backup.destinationPath is required when production=true" $pgPlatform.backup.destinationPath) $clusterName | quote }}
     s3Credentials:
       accessKeyId:
-        name: {{ $pgPlatform.backup.s3Credentials.secretName }}
+        name: {{ required "platform.postgres.backup.s3Credentials.secretName is required when production=true" $pgPlatform.backup.s3Credentials.secretName }}
         key: {{ $pgPlatform.backup.s3Credentials.accessKeyIdKey | default "ACCESS_KEY_ID" }}
       secretAccessKey:
-        name: {{ $pgPlatform.backup.s3Credentials.secretName }}
+        name: {{ required "platform.postgres.backup.s3Credentials.secretName is required when production=true" $pgPlatform.backup.s3Credentials.secretName }}
         key: {{ $pgPlatform.backup.s3Credentials.secretAccessKeyKey | default "ACCESS_SECRET_KEY" }}
-    {{- end }}
-    {{- if $pgPlatform.backup.googleCredentials }}
-    googleCredentials:
-      applicationCredentials:
-        name: {{ $pgPlatform.backup.googleCredentials.secretName }}
-        key: {{ $pgPlatform.backup.googleCredentials.key | default "key.json" }}
-    {{- end }}
     wal:
       compression: {{ $pgPlatform.backup.walCompression | default "gzip" }}
   retentionPolicy: {{ $pgPlatform.backup.retentionPolicy | default "30d" | quote }}
@@ -106,6 +95,5 @@ spec:
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
 {{- end }}
-*/}}
 {{- end }}
 {{- end }}

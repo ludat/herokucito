@@ -51,6 +51,12 @@ renders postgres in production mode:
             - ALTER USER app WITH SUPERUSER;
       enablePDB: true
       instances: 2
+      plugins:
+        - enabled: true
+          isWALArchiver: true
+          name: barman-cloud.cloudnative-pg.io
+          parameters:
+            barmanObjectName: RELEASE-NAME-db-store
       resources:
         limits:
           cpu: 500m
@@ -60,3 +66,45 @@ renders postgres in production mode:
           memory: 128Mi
       storage:
         size: 5Gi
+  2: |
+    apiVersion: barmancloud.cnpg.io/v1
+    kind: ObjectStore
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-20"
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.2.0
+      name: RELEASE-NAME-db-store
+    spec:
+      configuration:
+        destinationPath: s3://cloudnativepg-backups/RELEASE-NAME-db
+        endpointURL: https://....r2.cloudflarestorage.com
+        s3Credentials:
+          accessKeyId:
+            key: ACCESS_KEY_ID
+            name: shared-psql-wale-creds
+          secretAccessKey:
+            key: ACCESS_SECRET_KEY
+            name: shared-psql-wale-creds
+        wal:
+          compression: gzip
+      retentionPolicy: 30d
+  3: |
+    apiVersion: postgresql.cnpg.io/v1
+    kind: ScheduledBackup
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.2.0
+      name: RELEASE-NAME-db-backup
+    spec:
+      backupOwnerReference: self
+      cluster:
+        name: RELEASE-NAME-db
+      method: plugin
+      pluginConfiguration:
+        name: barman-cloud.cloudnative-pg.io
+      schedule: 0 0 0 * * *
