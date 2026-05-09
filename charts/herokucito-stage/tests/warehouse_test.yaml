@@ -1,0 +1,79 @@
+suite: warehouse
+templates:
+  - templates/warehouse.yaml
+
+tests:
+  - it: renders warehouse with semver source
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+              constraint: "^1.x"
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders warehouse with lexical source
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: lexical
+              pattern: "v*"
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders warehouse with digest source
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: digest
+              tag: latest
+    asserts:
+      - matchSnapshot: {}
+
+  - it: substitutes vars in lexical pattern
+    set:
+      vars:
+        slug: myapp
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: lexical
+              pattern: "$(slug)-v*"
+    asserts:
+      - equal:
+          path: spec.subscriptions[0].image.allowTags
+          value: "myapp-v*"
+
+  - it: does not render warehouse when service has no source
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: does not render warehouse when only upstream sources
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: upstream
+              stage: staging
+    asserts:
+      - hasDocuments:
+          count: 0

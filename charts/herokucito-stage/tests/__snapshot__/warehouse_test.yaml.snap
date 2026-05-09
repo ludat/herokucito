@@ -1,0 +1,45 @@
+renders warehouse with digest source:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Warehouse
+    metadata:
+      name: images
+    spec:
+      freightCreationPolicy: Automatic
+      subscriptions:
+        - image:
+            constraint: latest
+            discoveryLimit: 20
+            imageSelectionStrategy: Digest
+            repoURL: myregistry/backend
+            strictSemvers: false
+renders warehouse with lexical source:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Warehouse
+    metadata:
+      name: images
+    spec:
+      freightCreationPolicy: Automatic
+      subscriptions:
+        - image:
+            allowTags: v*
+            discoveryLimit: 20
+            imageSelectionStrategy: Lexical
+            repoURL: myregistry/backend
+            strictSemvers: false
+renders warehouse with semver source:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Warehouse
+    metadata:
+      name: images
+    spec:
+      freightCreationPolicy: Automatic
+      subscriptions:
+        - image:
+            constraint: ^1.x
+            discoveryLimit: 20
+            imageSelectionStrategy: SemVer
+            repoURL: myregistry/backend
+            strictSemvers: true

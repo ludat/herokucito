@@ -1,0 +1,121 @@
+renders stage with direct promotion and semver service:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Stage
+    metadata:
+      finalizers:
+        - kargo.akuity.io/finalizer
+      name: RELEASE-NAME
+    spec:
+      promotionTemplate:
+        spec:
+          steps:
+            - config:
+                apps:
+                  - name: ${{ ctx.project }}-${{ ctx.stage }}
+                    namespace: ${{ ctx.project }}
+                    sources:
+                      - chart: herokucito-app
+                        helm:
+                          images:
+                            - key: services.backend.image.tag
+                              value: ${{ imageFrom("myregistry/backend").Tag + "@" + imageFrom("myregistry/backend").Digest }}
+                        repoURL: oci://registry.example.com/charts
+              uses: argocd-update
+      requestedFreight:
+        - origin:
+            kind: Warehouse
+            name: images
+          sources:
+            direct: true
+renders stage with git promotion and semver service:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Stage
+    metadata:
+      finalizers:
+        - kargo.akuity.io/finalizer
+      name: RELEASE-NAME
+    spec:
+      promotionTemplate:
+        spec:
+          steps:
+            - config:
+                checkout:
+                  - branch: main
+                    path: ./out
+                repoURL: https://git.example.com/repo
+              uses: git-clone
+            - as: update-backend
+              config:
+                path: ./out/staging/values.yaml
+                updates:
+                  - key: services.backend.image.tag
+                    value: ${{ imageFrom("myregistry/backend").Tag + "@" + imageFrom("myregistry/backend").Digest }}
+              uses: yaml-update
+            - as: commit
+              config:
+                message: |
+                  [${{ ctx.stage }}] Update images
+                path: ./out
+              uses: git-commit
+            - config:
+                path: ./out
+              uses: git-push
+            - config:
+                apps:
+                  - name: ${{ ctx.project }}-${{ ctx.stage }}
+                    namespace: ${{ ctx.project }}
+              uses: argocd-update
+      requestedFreight:
+        - origin:
+            kind: Warehouse
+            name: images
+          sources:
+            direct: true
+renders stage with upstream source:
+  1: |
+    apiVersion: kargo.akuity.io/v1alpha1
+    kind: Stage
+    metadata:
+      finalizers:
+        - kargo.akuity.io/finalizer
+      name: RELEASE-NAME
+    spec:
+      promotionTemplate:
+        spec:
+          steps:
+            - config:
+                checkout:
+                  - branch: main
+                    path: ./out
+                repoURL: https://git.example.com/repo
+              uses: git-clone
+            - as: update-backend
+              config:
+                path: ./out/prod/values.yaml
+                updates:
+                  - key: services.backend.image.tag
+                    value: ${{ imageFrom("myregistry/backend").Tag + "@" + imageFrom("myregistry/backend").Digest }}
+              uses: yaml-update
+            - as: commit
+              config:
+                message: |
+                  [${{ ctx.stage }}] Update images
+                path: ./out
+              uses: git-commit
+            - config:
+                path: ./out
+              uses: git-push
+            - config:
+                apps:
+                  - name: ${{ ctx.project }}-${{ ctx.stage }}
+                    namespace: ${{ ctx.project }}
+              uses: argocd-update
+      requestedFreight:
+        - origin:
+            kind: Warehouse
+            name: images
+          sources:
+            stages:
+              - staging

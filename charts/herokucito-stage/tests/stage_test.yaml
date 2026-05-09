@@ -1,0 +1,120 @@
+suite: stage
+templates:
+  - templates/stage.yaml
+
+tests:
+  - it: renders stage with git promotion and semver service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+              constraint: "^1.x"
+      stage:
+        valuesRepo:
+          url: https://git.example.com/repo
+          branch: main
+          path: staging/values.yaml
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders stage with direct promotion and semver service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+              constraint: "^1.x"
+      stage:
+        promotion:
+          method: direct
+        appChart:
+          repoURL: oci://registry.example.com/charts
+          chart: herokucito-app
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders stage with upstream source
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: upstream
+              stage: staging
+      stage:
+        valuesRepo:
+          url: https://git.example.com/repo
+          branch: main
+          path: prod/values.yaml
+    asserts:
+      - matchSnapshot: {}
+
+  - it: falls back to projectDefaults promotion method
+    set:
+      projectDefaults:
+        promotion:
+          method: direct
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+      stage:
+        appChart:
+          repoURL: oci://registry.example.com/charts
+    asserts:
+      - equal:
+          path: spec.promotionTemplate.spec.steps[0].uses
+          value: argocd-update
+
+  - it: falls back to git promotion when no method set
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+      stage:
+        valuesRepo:
+          url: https://git.example.com/repo
+          branch: main
+          path: staging/values.yaml
+    asserts:
+      - equal:
+          path: spec.promotionTemplate.spec.steps[0].uses
+          value: git-clone
+
+  - it: fails with invalid source type on service
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: invalid
+    asserts:
+      - failedTemplate:
+          errorMessage: 'service backend: invalid source.type "invalid", must be one of: semver, lexical, digest, upstream'
+
+  - it: fails with invalid promotion method
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: semver
+      stage:
+        promotion:
+          method: invalid
+    asserts:
+      - failedTemplate:
+          errorMessage: 'invalid stage.promotion.method "invalid", must be one of: git, direct'
