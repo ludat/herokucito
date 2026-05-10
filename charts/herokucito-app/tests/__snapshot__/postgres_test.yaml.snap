@@ -90,6 +90,14 @@ renders postgres in production mode:
             name: shared-psql-wale-creds
         wal:
           compression: gzip
+      instanceSidecarConfiguration:
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
       retentionPolicy: 30d
   3: |
     apiVersion: postgresql.cnpg.io/v1
