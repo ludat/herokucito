@@ -1,4 +1,6 @@
 suite: postgres
+values:
+  - platform_values.yaml
 templates:
   - templates/postgres.yaml
 tests:
@@ -18,6 +20,17 @@ tests:
         db:
           type: postgres
           size: small
+      platform:
+        test:
+          postgres:
+            backup:
+              sidecarResources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 256Mi
     asserts:
       - matchSnapshot: {}
 
@@ -27,7 +40,7 @@ tests:
       dependencies:
         db:
           type: postgres
-      platform.x.postgres.backup.endpointURL: ""
+      platform.test.postgres.backup.endpointURL: ""
     asserts:
       - failedTemplate:
           errorMessage: "platform.postgres.backup.endpointURL is required when production=true"
@@ -38,7 +51,7 @@ tests:
       dependencies:
         db:
           type: postgres
-      platform.x.postgres.backup.destinationPath: ""
+      platform.test.postgres.backup.destinationPath: ""
     asserts:
       - failedTemplate:
           errorMessage: "platform.postgres.backup.destinationPath is required when production=true"
@@ -49,7 +62,17 @@ tests:
       dependencies:
         db:
           type: postgres
-      platform.x.postgres.backup.s3Credentials.secretName: ""
+      platform.test.postgres.backup.s3Credentials.secretName: ""
     asserts:
       - failedTemplate:
           errorMessage: "platform.postgres.backup.s3Credentials.secretName is required when production=true"
+
+  - it: fails when production=true but sidecarResources is missing
+    set:
+      production: true
+      dependencies:
+        db:
+          type: postgres
+    asserts:
+      - failedTemplate:
+          errorMessage: "platform.postgres.backup.sidecarResources is required"

@@ -8,7 +8,7 @@ renders postgres in non-production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -21,10 +21,10 @@ renders postgres in non-production mode:
       instances: 1
       resources:
         limits:
-          cpu: 500m
-          memory: 512Mi
+          cpu: "1"
+          memory: 516Mi
         requests:
-          cpu: 100m
+          cpu: 60m
           memory: 128Mi
       storage:
         size: 5Gi
@@ -40,7 +40,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -59,10 +59,10 @@ renders postgres in production mode:
             barmanObjectName: RELEASE-NAME-db-store
       resources:
         limits:
-          cpu: 500m
-          memory: 512Mi
+          cpu: "1"
+          memory: 516Mi
         requests:
-          cpu: 100m
+          cpu: 60m
           memory: 128Mi
       storage:
         size: 5Gi
@@ -75,12 +75,12 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-db-store
     spec:
       configuration:
         destinationPath: s3://cloudnativepg-backups/RELEASE-NAME-db
-        endpointURL: https://....r2.cloudflarestorage.com
+        endpointURL: https://test.r2.cloudflarestorage.com
         s3Credentials:
           accessKeyId:
             key: ACCESS_KEY_ID
@@ -94,7 +94,7 @@ renders postgres in production mode:
         resources:
           limits:
             cpu: 100m
-            memory: 128Mi
+            memory: 256Mi
           requests:
             cpu: 10m
             memory: 64Mi
@@ -106,7 +106,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-db-backup
     spec:
       backupOwnerReference: self

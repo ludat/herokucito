@@ -12,7 +12,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -21,7 +21,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -54,7 +54,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -63,7 +63,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -97,7 +97,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -106,7 +106,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -139,7 +139,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -148,7 +148,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -182,7 +182,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -191,7 +191,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -259,7 +259,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -268,7 +268,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -337,7 +337,7 @@ renders hooks with secrets:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.2
+        helm.sh/chart: herokucito-app-0.2.3
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -346,7 +346,7 @@ renders hooks with secrets:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.2
+            helm.sh/chart: herokucito-app-0.2.3
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:

@@ -80,7 +80,7 @@ spec:
       compression: {{ $pgPlatform.backup.walCompression | default "gzip" }}
   instanceSidecarConfiguration:
     resources:
-      {{- toYaml ($pgPlatform.backup.sidecarResources | default (dict "requests" (dict "cpu" "10m" "memory" "64Mi") "limits" (dict "cpu" "100m" "memory" "128Mi"))) | nindent 6 }}
+      {{- $pgPlatform.backup.sidecarResources | required "platform.postgres.backup.sidecarResources is required" | toYaml | nindent 6 }}
   retentionPolicy: {{ $pgPlatform.backup.retentionPolicy | default "30d" | quote }}
 ---
 apiVersion: postgresql.cnpg.io/v1
