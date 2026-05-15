@@ -81,3 +81,11 @@ platformConfig:
         requests:
           cpu: 60m
           memory: 128Mi
+    backup:
+      sidecarResources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          cpu: "1"
+          memory: 1Gi
