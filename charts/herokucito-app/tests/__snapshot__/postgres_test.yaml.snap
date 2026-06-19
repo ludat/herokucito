@@ -8,7 +8,7 @@ renders postgres in non-production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.3
+        helm.sh/chart: herokucito-app-0.2.4
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -29,6 +29,9 @@ renders postgres in non-production mode:
       storage:
         size: 5Gi
         storageClass: juicefs-cheap-shared
+      walStorage:
+        size: 2Gi
+        storageClass: local-path
 renders postgres in production mode:
   1: |
     apiVersion: postgresql.cnpg.io/v1
@@ -40,7 +43,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.3
+        helm.sh/chart: herokucito-app-0.2.4
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -75,7 +78,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.3
+        helm.sh/chart: herokucito-app-0.2.4
       name: RELEASE-NAME-db-store
     spec:
       configuration:
@@ -106,7 +109,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.3
+        helm.sh/chart: herokucito-app-0.2.4
       name: RELEASE-NAME-db-backup
     spec:
       backupOwnerReference: self

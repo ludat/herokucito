@@ -44,6 +44,11 @@ spec:
     {{- if not $production }}
     storageClass: juicefs-cheap-shared
     {{- end }}
+  {{- if not $production }}
+  walStorage:
+    size: 2Gi
+    storageClass: local-path
+  {{- end }}
   resources:
     {{- $resources := index $pgPlatform.resourcePresets $sizePreset }}
     {{- toYaml $resources | nindent 4 }}
