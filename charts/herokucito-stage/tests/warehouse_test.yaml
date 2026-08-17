@@ -52,7 +52,7 @@ tests:
               pattern: "$(slug)-v*"
     asserts:
       - equal:
-          path: spec.subscriptions[0].image.allowTags
+          path: spec.subscriptions[0].image.allowTagsRegexes
           value: "myapp-v*"
 
   - it: does not render warehouse when service has no source
