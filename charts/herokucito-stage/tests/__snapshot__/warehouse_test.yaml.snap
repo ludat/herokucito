@@ -23,7 +23,8 @@ renders warehouse with lexical source:
       freightCreationPolicy: Automatic
       subscriptions:
         - image:
-            allowTagsRegexes: v*
+            allowTagsRegexes:
+              - v*
             discoveryLimit: 20
             imageSelectionStrategy: Lexical
             repoURL: myregistry/backend

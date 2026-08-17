@@ -53,7 +53,8 @@ tests:
     asserts:
       - equal:
           path: spec.subscriptions[0].image.allowTagsRegexes
-          value: "myapp-v*"
+          value:
+            - "myapp-v*"
 
   - it: does not render warehouse when service has no source
     set:
