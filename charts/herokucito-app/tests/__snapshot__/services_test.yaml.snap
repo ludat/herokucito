@@ -10,7 +10,7 @@ renders service for a single service:
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: herokucito-app
         app.kubernetes.io/version: v1.0.0
-        helm.sh/chart: herokucito-app-0.2.7
+        helm.sh/chart: herokucito-app-0.2.8
       name: RELEASE-NAME-backend
     spec:
       ports:

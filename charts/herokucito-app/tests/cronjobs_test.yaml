@@ -19,3 +19,24 @@ tests:
             - ./cleanup.sh
     asserts:
       - matchSnapshot: {}
+
+  - it: sanitizes image tag for version label
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: 1.0.0+build.5
+      jobs:
+        cleanup:
+          schedule: "0 2 * * *"
+          service: backend
+          command:
+            - ./cleanup.sh
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: 1.0.0-build.5
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/version"]
+          value: 1.0.0-build.5

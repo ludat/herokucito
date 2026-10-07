@@ -100,3 +100,21 @@ tests:
         post-deploy: []
     asserts:
       - matchSnapshot: {}
+
+  - it: sanitizes image tag for version label
+    set:
+      hooks:
+        pre-deploy:
+          - name: migrate
+            image:
+              repository: myregistry/backend
+              tag: _2.0+rc/1
+            command:
+              - ./migrate.sh
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: 2.0-rc-1
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/version"]
+          value: 2.0-rc-1
