@@ -4,11 +4,13 @@ renders service for a single service:
     kind: Service
     metadata:
       labels:
-        app.kubernetes.io/instance: RELEASE-NAME-backend
+        app.kubernetes.io/component: service
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-backend
     spec:
       ports:
@@ -17,7 +19,7 @@ renders service for a single service:
           protocol: TCP
           targetPort: http
       selector:
-        app.kubernetes.io/component: server
-        app.kubernetes.io/instance: RELEASE-NAME-backend
+        app.kubernetes.io/component: service
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/name: backend
       type: ClusterIP

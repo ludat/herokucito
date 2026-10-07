@@ -7,7 +7,7 @@ kind: Service
 metadata:
   name: {{ $appName }}-{{ $serviceName }}
   labels:
-    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $serviceName) | nindent 4 }}
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $serviceName "component" "service" "version" $service.image.tag) | nindent 4 }}
 spec:
   type: ClusterIP
   ports:

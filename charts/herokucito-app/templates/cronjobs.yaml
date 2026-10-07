@@ -9,8 +9,7 @@ kind: CronJob
 metadata:
   name: {{ $appName }}-job-{{ $jobName }}
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
-    app.kubernetes.io/component: cronjob
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $jobName "component" "cronjob" "version" $service.image.tag) | nindent 4 }}
 spec:
   schedule: {{ $job.schedule | quote }}
   concurrencyPolicy: {{ $job.concurrencyPolicy | default "Forbid" }}
@@ -21,8 +20,7 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "herokucito-app.labels" $root | nindent 12 }}
-            app.kubernetes.io/component: cronjob
+            {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $jobName "component" "cronjob" "version" $service.image.tag) | nindent 12 }}
         spec:
           restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
           serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}

@@ -9,19 +9,25 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         argocd.argoproj.io/sync-wave: "-10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: pre-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: migrate
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: pre-deploy
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: migrate
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -35,7 +41,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
                 - name: OTEL_SERVICE_NAME
                   value: migrate
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -57,19 +63,25 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         argocd.argoproj.io/sync-wave: "10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: post-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: notify
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: post-deploy
       name: RELEASE-NAME-post-notify
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: notify
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -83,7 +95,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
                 - name: OTEL_SERVICE_NAME
                   value: notify
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -106,19 +118,25 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         argocd.argoproj.io/sync-wave: "-10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: pre-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: migrate
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: pre-deploy
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: migrate
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -132,7 +150,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
                 - name: OTEL_SERVICE_NAME
                   value: backend
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -154,19 +172,25 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         argocd.argoproj.io/sync-wave: "10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: post-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: notify
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: post-deploy
       name: RELEASE-NAME-post-notify
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: notify
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -180,7 +204,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
                 - name: OTEL_SERVICE_NAME
                   value: backend
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -203,19 +227,25 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         argocd.argoproj.io/sync-wave: "-10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: pre-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: migrate
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: pre-deploy
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: migrate
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -229,7 +259,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
                 - name: OTEL_SERVICE_NAME
                   value: migrate
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -286,19 +316,25 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         argocd.argoproj.io/sync-wave: "10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: post-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: notify
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: post-deploy
       name: RELEASE-NAME-post-notify
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: notify
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -312,7 +348,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
                 - name: OTEL_SERVICE_NAME
                   value: notify
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -370,19 +406,25 @@ renders hooks with secrets:
         argocd.argoproj.io/sync-wave: "-10"
       labels:
         app.kubernetes.io/component: hook
-        app.kubernetes.io/hook-type: pre-deploy
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: migrate
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
+        herokucito.ludat.io/hook-type: pre-deploy
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
         metadata:
           labels:
             app.kubernetes.io/component: hook
+            app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
-            app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.6
+            app.kubernetes.io/name: migrate
+            app.kubernetes.io/part-of: herokucito-app
+            app.kubernetes.io/version: v1.0.0
+            helm.sh/chart: herokucito-app-0.2.7
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -396,7 +438,7 @@ renders hooks with secrets:
                 - name: OTEL_SERVICE_NAME
                   value: migrate
                 - name: OTEL_RESOURCE_ATTRIBUTES
-                  value: service.namespace=NAMESPACE,deployment.environment.name=
+                  value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
               envFrom:
                 - secretRef:
                     name: my-app-secrets

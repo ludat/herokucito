@@ -17,7 +17,7 @@ kind: Cluster
 metadata:
   name: {{ $clusterName }}
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" "postgresql" "component" "database") | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
     {{- if $failsafe }}
@@ -67,7 +67,7 @@ kind: ObjectStore
 metadata:
   name: {{ $storeName }}
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" "postgresql" "component" "database") | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
 spec:
@@ -93,7 +93,7 @@ kind: ScheduledBackup
 metadata:
   name: {{ $clusterName }}-backup
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" "postgresql" "component" "database") | nindent 4 }}
 spec:
   schedule: {{ $pgPlatform.backup.schedule | default "0 0 0 * * *" | quote }}
   backupOwnerReference: self

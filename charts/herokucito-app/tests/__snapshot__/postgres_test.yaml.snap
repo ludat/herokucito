@@ -6,9 +6,12 @@ renders postgres in non-production mode:
       annotations:
         argocd.argoproj.io/sync-wave: "-20"
       labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/part-of: herokucito-app
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -41,9 +44,12 @@ renders postgres in production mode:
         argocd.argoproj.io/sync-options: Delete=confirm
         argocd.argoproj.io/sync-wave: "-20"
       labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/part-of: herokucito-app
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -76,9 +82,12 @@ renders postgres in production mode:
       annotations:
         argocd.argoproj.io/sync-wave: "-20"
       labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/part-of: herokucito-app
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-db-store
     spec:
       configuration:
@@ -107,9 +116,12 @@ renders postgres in production mode:
     kind: ScheduledBackup
     metadata:
       labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/part-of: herokucito-app
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-db-backup
     spec:
       backupOwnerReference: self

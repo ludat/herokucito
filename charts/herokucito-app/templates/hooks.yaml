@@ -13,9 +13,8 @@ kind: Job
 metadata:
   name: {{ $appName }}-pre-{{ $hook.name }}
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
-    app.kubernetes.io/component: hook
-    app.kubernetes.io/hook-type: pre-deploy
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $hook.name "component" "hook" "version" $service.image.tag) | nindent 4 }}
+    herokucito.ludat.io/hook-type: pre-deploy
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
     argocd.argoproj.io/hook: Sync
@@ -25,8 +24,7 @@ spec:
     metadata:
       name: {{ $appName }}-pre-{{ $hook.name }}
       labels:
-        {{- include "herokucito-app.labels" $root | nindent 8 }}
-        app.kubernetes.io/component: hook
+        {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $hook.name "component" "hook" "version" $service.image.tag) | nindent 8 }}
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}
@@ -52,9 +50,8 @@ kind: Job
 metadata:
   name: {{ $appName }}-post-{{ $hook.name }}
   labels:
-    {{- include "herokucito-app.labels" $root | nindent 4 }}
-    app.kubernetes.io/component: hook
-    app.kubernetes.io/hook-type: post-deploy
+    {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $hook.name "component" "hook" "version" $service.image.tag) | nindent 4 }}
+    herokucito.ludat.io/hook-type: post-deploy
   annotations:
     argocd.argoproj.io/sync-wave: "10"
     argocd.argoproj.io/hook: Sync
@@ -64,8 +61,7 @@ spec:
     metadata:
       name: {{ $appName }}-post-{{ $hook.name }}
       labels:
-        {{- include "herokucito-app.labels" $root | nindent 8 }}
-        app.kubernetes.io/component: hook
+        {{- include "herokucito-app.serviceLabels" (dict "root" $root "serviceName" $hook.name "component" "hook" "version" $service.image.tag) | nindent 8 }}
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ include "herokucito-app.serviceAccountName" $root }}

@@ -5,9 +5,12 @@ renders cronjob referencing a service:
     metadata:
       labels:
         app.kubernetes.io/component: cronjob
+        app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.6
+        app.kubernetes.io/name: cleanup
+        app.kubernetes.io/part-of: herokucito-app
+        app.kubernetes.io/version: v1.0.0
+        helm.sh/chart: herokucito-app-0.2.7
       name: RELEASE-NAME-job-cleanup
     spec:
       concurrencyPolicy: Forbid
@@ -18,9 +21,12 @@ renders cronjob referencing a service:
             metadata:
               labels:
                 app.kubernetes.io/component: cronjob
+                app.kubernetes.io/instance: RELEASE-NAME
                 app.kubernetes.io/managed-by: Helm
-                app.kubernetes.io/part-of: RELEASE-NAME
-                helm.sh/chart: herokucito-app-0.2.6
+                app.kubernetes.io/name: cleanup
+                app.kubernetes.io/part-of: herokucito-app
+                app.kubernetes.io/version: v1.0.0
+                helm.sh/chart: herokucito-app-0.2.7
             spec:
               containers:
                 - command:
@@ -33,7 +39,7 @@ renders cronjob referencing a service:
                     - name: OTEL_SERVICE_NAME
                       value: backend
                     - name: OTEL_RESOURCE_ATTRIBUTES
-                      value: service.namespace=NAMESPACE,deployment.environment.name=
+                      value: service.namespace=NAMESPACE,service.version=v1.0.0,deployment.environment.name=
                   image: myregistry/backend:v1.0.0
                   name: cleanup
                   resources:

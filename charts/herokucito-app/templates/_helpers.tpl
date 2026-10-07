@@ -20,22 +20,29 @@ Chart name and version
 {{- end }}
 
 {{/*
-Common labels
+Common labels, present on every resource of the release
 */}}
 {{- define "herokucito-app.labels" -}}
 helm.sh/chart: {{ include "herokucito-app.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: {{ include "herokucito-app.name" . }}
+app.kubernetes.io/part-of: {{ .Chart.Name }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- with .Values.vars.slug }}
+herokucito.ludat.io/environment: {{ . }}
+{{- end }}
 {{- end }}
 
 {{/*
-Service-specific labels
-Usage: {{ include "herokucito-app.serviceLabels" (dict "root" . "serviceName" "backend") }}
+Labels for resources of a user-declared service/dependency
+Usage: {{ include "herokucito-app.serviceLabels" (dict "root" . "serviceName" "backend" "component" "service" "version" $service.image.tag) }}
 */}}
 {{- define "herokucito-app.serviceLabels" -}}
 {{ include "herokucito-app.labels" .root }}
 app.kubernetes.io/name: {{ .serviceName }}
-app.kubernetes.io/instance: {{ include "herokucito-app.fullname" .root }}-{{ .serviceName }}
+app.kubernetes.io/component: {{ .component }}
+{{- with .version }}
+app.kubernetes.io/version: {{ . | toString | trunc 63 | trimSuffix "-" | quote }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -44,8 +51,8 @@ Usage: {{ include "herokucito-app.serviceSelectorLabels" (dict "root" . "service
 */}}
 {{- define "herokucito-app.serviceSelectorLabels" -}}
 app.kubernetes.io/name: {{ .serviceName }}
-app.kubernetes.io/instance: {{ include "herokucito-app.fullname" .root }}-{{ .serviceName }}
-app.kubernetes.io/component: server
+app.kubernetes.io/instance: {{ .root.Release.Name }}
+app.kubernetes.io/component: service
 {{- end }}
 
 {{/*
@@ -96,7 +103,7 @@ env:
   - name: OTEL_SERVICE_NAME
     value: {{ .serviceName | quote }}
   - name: OTEL_RESOURCE_ATTRIBUTES
-    value: {{ printf "service.namespace=%s,deployment.environment.name=%s" $root.Release.Namespace ($root.Values.vars.slug | default "") | quote }}
+    value: {{ printf "service.namespace=%s,service.version=%s,deployment.environment.name=%s" $root.Release.Namespace (toString $service.image.tag) ($root.Values.vars.slug | default "") | quote }}
 {{- end }}
 {{- range $key, $value := $service.env }}
   - name: {{ $key }}
