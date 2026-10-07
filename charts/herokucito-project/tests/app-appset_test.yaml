@@ -1,0 +1,23 @@
+suite: app-appset
+templates:
+  - templates/app-appset.yaml
+set:
+  platformKey: testkey
+
+tests:
+  - it: renders appset with git as default promotion method
+    asserts:
+      - matchSnapshot: {}
+
+  - it: renders appset with direct as default promotion method
+    set:
+      defaultPromotion:
+        method: direct
+    asserts:
+      - matchRegex:
+          path: spec.templatePatch
+          pattern: 'default "direct"'
+      - notExists:
+          path: spec.template.spec.sources
+      - notExists:
+          path: spec.template.spec.source

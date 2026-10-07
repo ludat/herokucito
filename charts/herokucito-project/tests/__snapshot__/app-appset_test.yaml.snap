@@ -1,0 +1,150 @@
+renders appset with git as default promotion method:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: banana-split
+      namespace: banana-split
+    spec:
+      generators:
+        - git:
+            files:
+              - path: '**/rendered_values.yaml'
+            repoURL: https://github.com/ludat/banana-split.git
+            revision: herokucito
+            values:
+              slug: '{{ .path.path | trimPrefix "" | slugify 23 false }}'
+      goTemplate: true
+      goTemplateOptions:
+        - missingkey=error
+      ignoreApplicationDifferences:
+        - jqPathExpressions:
+            - .spec.sources[].helm.parameters
+            - .spec.source.helm.parameters
+        - jsonPointers:
+            - /spec/syncPolicy
+      strategy:
+        rollingSync:
+          steps:
+            - matchExpressions:
+                - key: herokucito.ludat.io/production
+                  operator: NotIn
+                  values:
+                    - "true"
+            - matchExpressions:
+                - key: herokucito.ludat.io/production
+                  operator: In
+                  values:
+                    - "true"
+              maxUpdate: 1
+        type: RollingSync
+      template:
+        metadata:
+          annotations:
+            kargo.akuity.io/authorized-stage: banana-split:{{ .values.slug }}
+          finalizers:
+            - resources-finalizer.argocd.argoproj.io
+          labels:
+            herokucito.ludat.io/production: '{{ dig "production" false . | toString }}'
+          name: banana-split-{{ .values.slug }}
+        spec:
+          destination:
+            namespace: banana-split
+            server: https://kubernetes.default.svc
+          project: banana-split
+          syncPolicy:
+            syncOptions:
+              - ServerSideApply=true
+      templatePatch: |
+        {{- $method := dig "stage" "promotion" "method" "" . | default "git" }}
+        {{- if dig "production" false . }}
+        metadata:
+          annotations:
+            argocd.argoproj.io/sync-options: Delete=confirm
+        {{- end }}
+        spec:
+        {{- if eq $method "direct" }}
+        {{- $platform := "{\"platform\":{\"testkey\":{\"otlp\":{\"enabled\":true,\"endpoint\":\"http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318\"},\"postgres\":{\"backup\":{\"sidecarResources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"1Gi\"},\"requests\":{\"cpu\":\"10m\",\"memory\":\"64Mi\"}}},\"defaultVersion\":\"16\",\"resourcePresets\":{\"small\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"516Mi\"},\"requests\":{\"cpu\":\"60m\",\"memory\":\"128Mi\"}}},\"sizePresets\":{\"small\":\"5Gi\"}},\"resourcePresets\":{\"large\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"1Gi\"},\"requests\":{\"cpu\":\"250m\",\"memory\":\"256Mi\"}},\"medium\":{\"limits\":{\"cpu\":\"500m\",\"memory\":\"512Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"128Mi\"}},\"small\":{\"limits\":{\"cpu\":\"100m\",\"memory\":\"256Mi\"},\"requests\":{\"cpu\":\"20m\",\"memory\":\"64Mi\"}}}}},\"platformKey\":\"testkey\"}" | fromYaml }}
+        {{- $_ := set $platform "vars" (dict "slug" .values.slug) }}
+        {{- $values := mergeOverwrite (deepCopy (omit . "path" "values")) $platform }}
+          source:
+            repoURL: "ghcr.io/ludat/charts"
+            chart: "herokucito-app"
+            path: ""
+            targetRevision: "0.1.0"
+            helm:
+              # User values with platform config merged on top (overrides user values)
+              values: |{{- toYaml $values | nindent 12 }}
+        {{- else }}
+          sources:
+            - repoURL: "https://github.com/ludat/banana-split.git"
+              targetRevision: "herokucito"
+              ref: values
+            - repoURL: "ghcr.io/ludat/charts"
+              chart: "herokucito-app"
+              path: ""
+              targetRevision: "0.1.0"
+              helm:
+                valueFiles:
+                  - "$values/{{ .path.path }}/rendered_values.yaml"
+                # Platform config injected last (overrides user values)
+                values: |
+                  vars:
+                    slug: {{ .values.slug | quote }}
+                  platformKey: "testkey"
+                  platform:
+                    testkey:
+                      otlp:
+                        enabled: true
+                        endpoint: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                      postgres:
+                        backup:
+                          sidecarResources:
+                            limits:
+                              cpu: "1"
+                              memory: 1Gi
+                            requests:
+                              cpu: 10m
+                              memory: 64Mi
+                        defaultVersion: "16"
+                        resourcePresets:
+                          small:
+                            limits:
+                              cpu: "1"
+                              memory: 516Mi
+                            requests:
+                              cpu: 60m
+                              memory: 128Mi
+                        sizePresets:
+                          small: 5Gi
+                      resourcePresets:
+                        large:
+                          limits:
+                            cpu: "1"
+                            memory: 1Gi
+                          requests:
+                            cpu: 250m
+                            memory: 256Mi
+                        medium:
+                          limits:
+                            cpu: 500m
+                            memory: 512Mi
+                          requests:
+                            cpu: 100m
+                            memory: 128Mi
+                        small:
+                          limits:
+                            cpu: 100m
+                            memory: 256Mi
+                          requests:
+                            cpu: 20m
+                            memory: 64Mi
+        {{- end }}
+        {{- if dig "production" false . }}
+          syncPolicy:
+            automated:
+              enabled: false
+              prune: false
+            syncOptions:
+              - Delete=false
+        {{- end }}

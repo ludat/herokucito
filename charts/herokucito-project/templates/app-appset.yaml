@@ -51,6 +51,31 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: {{ .Values.project | quote }}
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
+
+  templatePatch: |
+    {{ `{{-` }} $method := dig "stage" "promotion" "method" "" . | default {{ .Values.defaultPromotion.method | quote }} {{ `}}` }}
+    {{ `{{-` }} if dig "production" false . {{ `}}` }}
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=confirm
+    {{ `{{-` }} end {{ `}}` }}
+    spec:
+    {{ `{{-` }} if eq $method "direct" {{ `}}` }}
+    {{ `{{-` }} $platform := {{ include "herokucito-project.platformConfig" . | fromYaml | toJson | quote }} | fromYaml {{ `}}` }}
+    {{ `{{-` }} $_ := set $platform "vars" (dict "slug" .values.slug) {{ `}}` }}
+    {{ `{{-` }} $values := mergeOverwrite (deepCopy (omit . "path" "values")) $platform {{ `}}` }}
+      source:
+        repoURL: {{ .Values.appChart.repoURL | quote }}
+        chart: {{ .Values.appChart.chart | quote }}
+        path: {{ .Values.appChart.path | quote }}
+        targetRevision: {{ .Values.appChart.version | quote }}
+        helm:
+          # User values with platform config merged on top (overrides user values)
+          values: |{{ `{{-` }} toYaml $values | nindent 12 {{ `}}` }}
+    {{ `{{-` }} else {{ `}}` }}
       sources:
         - repoURL: {{ include "herokucito-project.repoUrl" . | quote }}
           targetRevision: {{ .Values.infra.branch | quote }}
@@ -59,7 +84,6 @@ spec:
           chart: {{ .Values.appChart.chart | quote }}
           path: {{ .Values.appChart.path | quote }}
           targetRevision: {{ .Values.appChart.version | quote }}
-
           helm:
             valueFiles:
               - "$values/{{ `{{` }} .path.path {{ `}}` }}/rendered_values.yaml"
@@ -68,17 +92,8 @@ spec:
               vars:
                 slug: {{ `{{` }} .values.slug | quote {{ `}}` }}
               {{- include "herokucito-project.platformConfig" . | nindent 14 }}
-
-      syncPolicy:
-        syncOptions:
-          - ServerSideApply=true
-
-  templatePatch: |
+    {{ `{{-` }} end {{ `}}` }}
     {{ `{{-` }} if dig "production" false . {{ `}}` }}
-    metadata:
-      annotations:
-        argocd.argoproj.io/sync-options: Delete=confirm
-    spec:
       syncPolicy:
         automated:
           enabled: false
