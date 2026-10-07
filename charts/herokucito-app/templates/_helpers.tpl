@@ -41,7 +41,7 @@ Usage: {{ include "herokucito-app.serviceLabels" (dict "root" . "serviceName" "b
 app.kubernetes.io/name: {{ .serviceName }}
 app.kubernetes.io/component: {{ .component }}
 {{- with .version }}
-app.kubernetes.io/version: {{ . | toString | trunc 63 | trimSuffix "-" | quote }}
+app.kubernetes.io/version: {{ regexReplaceAll "^[^A-Za-z0-9]+|[^A-Za-z0-9]+$" (regexReplaceAll "[^A-Za-z0-9_.-]" (toString .) "-" | trunc 63) "" | quote }}
 {{- end }}
 {{- end }}
 

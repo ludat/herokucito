@@ -58,3 +58,18 @@ tests:
             - my-api-keys
     asserts:
       - matchSnapshot: {}
+
+  - it: sanitizes image tag for version label
+    set:
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: _v1.2.3+build/x@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: v1.2.3-build-x-sha256-0123456789abcdef0123456789abcdef01234567
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/version"]
+          value: v1.2.3-build-x-sha256-0123456789abcdef0123456789abcdef01234567
