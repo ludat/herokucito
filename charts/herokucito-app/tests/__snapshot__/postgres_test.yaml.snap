@@ -8,7 +8,7 @@ renders postgres in non-production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -43,7 +43,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-db
     spec:
       bootstrap:
@@ -78,7 +78,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-db-store
     spec:
       configuration:
@@ -109,7 +109,7 @@ renders postgres in production mode:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-db-backup
     spec:
       backupOwnerReference: self

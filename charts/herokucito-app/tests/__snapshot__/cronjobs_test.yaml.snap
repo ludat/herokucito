@@ -7,7 +7,7 @@ renders cronjob referencing a service:
         app.kubernetes.io/component: cronjob
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-job-cleanup
     spec:
       concurrencyPolicy: Forbid
@@ -20,7 +20,7 @@ renders cronjob referencing a service:
                 app.kubernetes.io/component: cronjob
                 app.kubernetes.io/managed-by: Helm
                 app.kubernetes.io/part-of: RELEASE-NAME
-                helm.sh/chart: herokucito-app-0.2.5
+                helm.sh/chart: herokucito-app-0.2.6
             spec:
               containers:
                 - command:
@@ -32,6 +32,8 @@ renders cronjob referencing a service:
                       value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                     - name: OTEL_SERVICE_NAME
                       value: backend
+                    - name: OTEL_RESOURCE_ATTRIBUTES
+                      value: service.namespace=NAMESPACE,deployment.environment.name=
                   image: myregistry/backend:v1.0.0
                   name: cleanup
                   resources:

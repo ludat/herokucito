@@ -95,6 +95,8 @@ env:
     value: {{ $otlp.endpoint | required "platform otlp.endpoint is required" | quote }}
   - name: OTEL_SERVICE_NAME
     value: {{ .serviceName | quote }}
+  - name: OTEL_RESOURCE_ATTRIBUTES
+    value: {{ printf "service.namespace=%s,deployment.environment.name=%s" $root.Release.Namespace ($root.Values.vars.slug | default "") | quote }}
 {{- end }}
 {{- range $key, $value := $service.env }}
   - name: {{ $key }}

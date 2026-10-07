@@ -12,7 +12,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -21,7 +21,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -34,6 +34,8 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: migrate
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -58,7 +60,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -67,7 +69,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -80,6 +82,8 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: notify
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -105,7 +109,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -114,7 +118,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -127,6 +131,8 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: backend
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -151,7 +157,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -160,7 +166,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -173,6 +179,8 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: backend
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -198,7 +206,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -207,7 +215,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -220,6 +228,8 @@ renders hooks for pre-deploy and post-deploy with dependencies:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: migrate
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -279,7 +289,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -288,7 +298,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -301,6 +311,8 @@ renders hooks for pre-deploy and post-deploy with dependencies:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: notify
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -361,7 +373,7 @@ renders hooks with secrets:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.5
+        helm.sh/chart: herokucito-app-0.2.6
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -370,7 +382,7 @@ renders hooks with secrets:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.5
+            helm.sh/chart: herokucito-app-0.2.6
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -383,6 +395,8 @@ renders hooks with secrets:
                   value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
                 - name: OTEL_SERVICE_NAME
                   value: migrate
+                - name: OTEL_RESOURCE_ATTRIBUTES
+                  value: service.namespace=NAMESPACE,deployment.environment.name=
               envFrom:
                 - secretRef:
                     name: my-app-secrets
