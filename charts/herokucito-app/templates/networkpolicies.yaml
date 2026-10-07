@@ -1,5 +1,6 @@
 {{- $root := . -}}
 {{- $appName := include "herokucito-app.fullname" . -}}
+{{- $otlp := (include "herokucito-app.platform" . | fromYaml).otlp | default dict -}}
 ---
 # Default deny all traffic for app pods
 apiVersion: networking.k8s.io/v1
@@ -106,6 +107,33 @@ spec:
               - 10.0.0.0/8
               - 172.16.0.0/12
               - 192.168.0.0/16
+{{- if $otlp.enabled }}
+---
+# Allow egress to the OpenTelemetry collector
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $appName }}-allow-otel
+  labels:
+    {{- include "herokucito-app.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ $appName }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: alloy-receiver
+      ports:
+        - protocol: TCP
+          port: 4318
+{{- end }}
 {{- /* Allow access to postgres clusters */ -}}
 {{- $hasPostgres := false -}}
 {{- range $depName, $dep := .Values.dependencies }}

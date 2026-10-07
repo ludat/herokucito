@@ -10,7 +10,7 @@ renders deployment for a single service:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -26,12 +26,16 @@ renders deployment for a single service:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
         spec:
           containers:
             - env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: backend
               image: myregistry/backend:v1.0.0
               livenessProbe:
                 failureThreshold: 3
@@ -78,7 +82,7 @@ renders deployment with custom command:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: worker
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-worker
     spec:
       selector:
@@ -94,7 +98,7 @@ renders deployment with custom command:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: worker
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
         spec:
           containers:
             - command:
@@ -102,6 +106,10 @@ renders deployment with custom command:
               env:
                 - name: PORT
                   value: "9090"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: worker
               image: myregistry/worker:v2.0.0
               livenessProbe:
                 failureThreshold: 3
@@ -148,7 +156,7 @@ renders deployment with pg:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -164,12 +172,16 @@ renders deployment with pg:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
         spec:
           containers:
             - env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: backend
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -251,7 +263,7 @@ renders deployment with secrets:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: backend
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-backend
     spec:
       selector:
@@ -267,12 +279,16 @@ renders deployment with secrets:
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/name: backend
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
         spec:
           containers:
             - env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: backend
               envFrom:
                 - secretRef:
                     name: my-app-secrets

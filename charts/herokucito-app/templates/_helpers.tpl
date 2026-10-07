@@ -86,9 +86,16 @@ Usage: {{ include "herokucito-app.env" (dict "root" . "serviceName" "backend" "s
 {{- $root := .root }}
 {{- $service := .service }}
 {{- $appName := include "herokucito-app.fullname" $root }}
+{{- $otlp := (include "herokucito-app.platform" $root | fromYaml).otlp | default dict }}
 env:
   - name: PORT
     value: {{ $service.port | default "8080" | quote }}
+{{- if $otlp.enabled }}
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: {{ $otlp.endpoint | required "platform otlp.endpoint is required" | quote }}
+  - name: OTEL_SERVICE_NAME
+    value: {{ .serviceName | quote }}
+{{- end }}
 {{- range $key, $value := $service.env }}
   - name: {{ $key }}
     value: {{ $value | quote }}

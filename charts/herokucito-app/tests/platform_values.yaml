@@ -1,6 +1,9 @@
 platformKey: test
 platform:
   test:
+    otlp:
+      enabled: true
+      endpoint: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
     resourcePresets:
       small:
         limits:

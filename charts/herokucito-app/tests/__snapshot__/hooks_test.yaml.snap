@@ -12,7 +12,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -21,7 +21,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -30,6 +30,10 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: migrate
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -54,7 +58,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -63,7 +67,7 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -72,6 +76,10 @@ renders hooks for pre-deploy and post-deploy using hardcoded images:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: notify
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -97,7 +105,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -106,7 +114,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -115,6 +123,10 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: backend
               image: myregistry/backend:v1.0.0
               name: migrate
               resources:
@@ -139,7 +151,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -148,7 +160,7 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -157,6 +169,10 @@ renders hooks for pre-deploy and post-deploy using the default from a service:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: backend
               image: myregistry/backend:v1.0.0
               name: notify
               resources:
@@ -182,7 +198,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -191,7 +207,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -200,6 +216,10 @@ renders hooks for pre-deploy and post-deploy with dependencies:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: migrate
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -259,7 +279,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
         app.kubernetes.io/hook-type: post-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-post-notify
     spec:
       template:
@@ -268,7 +288,7 @@ renders hooks for pre-deploy and post-deploy with dependencies:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-post-notify
         spec:
           containers:
@@ -277,6 +297,10 @@ renders hooks for pre-deploy and post-deploy with dependencies:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: notify
                 - name: BANANASPLIT_DATABASE_URL
                   valueFrom:
                     secretKeyRef:
@@ -337,7 +361,7 @@ renders hooks with secrets:
         app.kubernetes.io/hook-type: pre-deploy
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-pre-migrate
     spec:
       template:
@@ -346,7 +370,7 @@ renders hooks with secrets:
             app.kubernetes.io/component: hook
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/part-of: RELEASE-NAME
-            helm.sh/chart: herokucito-app-0.2.4
+            helm.sh/chart: herokucito-app-0.2.5
           name: RELEASE-NAME-pre-migrate
         spec:
           containers:
@@ -355,6 +379,10 @@ renders hooks with secrets:
               env:
                 - name: PORT
                   value: "8080"
+                - name: OTEL_EXPORTER_OTLP_ENDPOINT
+                  value: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                - name: OTEL_SERVICE_NAME
+                  value: migrate
               envFrom:
                 - secretRef:
                     name: my-app-secrets

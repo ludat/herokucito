@@ -6,7 +6,7 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-default-deny
     spec:
       podSelector:
@@ -22,7 +22,7 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-dns
     spec:
       egress:
@@ -47,7 +47,7 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-ingress
     spec:
       ingress:
@@ -68,7 +68,7 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-internal
     spec:
       egress:
@@ -94,7 +94,7 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-external
     spec:
       egress:
@@ -117,7 +117,33 @@ renders networkpolicies with postgres dependency:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
+      name: RELEASE-NAME-allow-otel
+    spec:
+      egress:
+        - ports:
+            - port: 4318
+              protocol: TCP
+          to:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: monitoring
+              podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: alloy-receiver
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+  7: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-postgres
     spec:
       egress:
@@ -141,7 +167,7 @@ renders networkpolicies without postgres:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-default-deny
     spec:
       podSelector:
@@ -157,7 +183,7 @@ renders networkpolicies without postgres:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-dns
     spec:
       egress:
@@ -182,7 +208,7 @@ renders networkpolicies without postgres:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-ingress
     spec:
       ingress:
@@ -203,7 +229,7 @@ renders networkpolicies without postgres:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-internal
     spec:
       egress:
@@ -229,7 +255,7 @@ renders networkpolicies without postgres:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: RELEASE-NAME
-        helm.sh/chart: herokucito-app-0.2.4
+        helm.sh/chart: herokucito-app-0.2.5
       name: RELEASE-NAME-allow-external
     spec:
       egress:
@@ -240,6 +266,32 @@ renders networkpolicies without postgres:
                   - 10.0.0.0/8
                   - 172.16.0.0/12
                   - 192.168.0.0/16
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: RELEASE-NAME
+      policyTypes:
+        - Egress
+  6: |
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: RELEASE-NAME
+        helm.sh/chart: herokucito-app-0.2.5
+      name: RELEASE-NAME-allow-otel
+    spec:
+      egress:
+        - ports:
+            - port: 4318
+              protocol: TCP
+          to:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: monitoring
+              podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: alloy-receiver
       podSelector:
         matchLabels:
           app.kubernetes.io/part-of: RELEASE-NAME

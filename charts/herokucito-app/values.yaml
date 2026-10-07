@@ -52,6 +52,9 @@ jobs: {}
 platformKey: x
 platform:
   x:
+    otlp:
+      enabled: true
+      endpoint: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
     resourcePresets:
       small:
         limits: { cpu: 100m, memory: 256Mi }
