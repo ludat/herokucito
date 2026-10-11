@@ -1,0 +1,66 @@
+renders review kargo appset:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: banana-split-review-kargo
+      namespace: banana-split
+    spec:
+      generators:
+        - pullRequest:
+            github:
+              owner: ludat
+              repo: banana-split
+              tokenRef:
+                key: token
+                secretName: github-token
+            requeueAfterSeconds: 300
+            values:
+              slug: '{{ printf "review-%s" .branch | slugify 23 false }}'
+      goTemplate: true
+      goTemplateOptions:
+        - missingkey=error
+      template:
+        metadata:
+          finalizers:
+            - resources-finalizer.argocd.argoproj.io
+          name: '{{ .values.slug }}-kargo'
+        spec:
+          destination:
+            namespace: banana-split
+            server: https://kubernetes.default.svc
+          project: banana-split
+          sources:
+            - ref: values
+              repoURL: https://github.com/ludat/banana-split.git
+              targetRevision: herokucito
+            - chart: herokucito-stage
+              helm:
+                releaseName: '{{ .values.slug }}'
+                valueFiles:
+                  - $values/pr.yaml
+                values: |
+                  vars:
+                    slug: {{ .values.slug | quote }}
+                    id: {{ .number | quote }}
+                    author: {{ .author | quote }}
+                    title: {{ .title | quote }}
+                    branch: {{ .branch | quote }}
+                    sha: {{ .head_sha | quote }}
+                  stage:
+                    promotion:
+                      method: direct
+                      warehouse: "{{ .values.slug }}"
+                    appChart:
+                      repoURL: "ghcr.io/ludat/charts"
+                      chart: "herokucito-app"
+              path: ""
+              repoURL: ghcr.io/ludat/charts
+              targetRevision: 0.1.0
+          syncPolicy:
+            automated:
+              enabled: true
+              prune: true
+            syncOptions:
+              - ServerSideApply=true
+              - RespectIgnoreDifferences=true

@@ -1,0 +1,38 @@
+suite: review-app-appset
+templates:
+  - templates/review-app-appset.yaml
+set:
+  platformKey: testkey
+  reviews:
+    enabled: true
+    github:
+      owner: ludat
+      repo: banana-split
+
+tests:
+  - it: renders nothing when reviews are disabled
+    set:
+      reviews:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders review appset
+    asserts:
+      - matchSnapshot: {}
+
+  - it: prefixes the slug with review-
+    asserts:
+      - equal:
+          path: spec.generators[0].pullRequest.values.slug
+          value: '{{ printf "review-%s" .branch | slugify 23 false }}'
+
+  - it: uses the slug as is for app and stage names
+    asserts:
+      - equal:
+          path: spec.template.metadata.name
+          value: "banana-split-{{ .values.slug }}"
+      - equal:
+          path: spec.template.metadata.annotations["kargo.akuity.io/authorized-stage"]
+          value: "banana-split:{{ .values.slug }}"

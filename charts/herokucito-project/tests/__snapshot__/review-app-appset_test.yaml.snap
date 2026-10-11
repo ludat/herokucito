@@ -1,0 +1,113 @@
+renders review appset:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: banana-split-review-app
+      namespace: banana-split
+    spec:
+      generators:
+        - pullRequest:
+            github:
+              owner: ludat
+              repo: banana-split
+              tokenRef:
+                key: token
+                secretName: github-token
+            requeueAfterSeconds: 300
+            values:
+              slug: '{{ printf "review-%s" .branch | slugify 23 false }}'
+      goTemplate: true
+      goTemplateOptions:
+        - missingkey=error
+      ignoreApplicationDifferences:
+        - jqPathExpressions:
+            - .spec.sources[].helm.parameters
+            - .spec.source.helm.parameters
+        - jsonPointers:
+            - /spec/syncPolicy
+      template:
+        metadata:
+          annotations:
+            kargo.akuity.io/authorized-stage: banana-split:{{ .values.slug }}
+          finalizers:
+            - resources-finalizer.argocd.argoproj.io
+          name: banana-split-{{ .values.slug }}
+        spec:
+          destination:
+            namespace: banana-split
+            server: https://kubernetes.default.svc
+          project: banana-split
+          sources:
+            - ref: values
+              repoURL: https://github.com/ludat/banana-split.git
+              targetRevision: herokucito
+            - chart: herokucito-app
+              helm:
+                valueFiles:
+                  - $values/pr.yaml
+                values: |
+                  vars:
+                    slug: {{ .values.slug | quote }}
+                    id: {{ .number | quote }}
+                    author: {{ .author | quote }}
+                    title: {{ .title | quote }}
+                    branch: {{ .branch | quote }}
+                    sha: {{ .head_sha | quote }}
+                  platformKey: "testkey"
+                  platform:
+                    testkey:
+                      otlp:
+                        enabled: true
+                        endpoint: http://alloy-alloy-receiver.monitoring.svc.cluster.local:4318
+                      postgres:
+                        backup:
+                          sidecarResources:
+                            limits:
+                              cpu: "1"
+                              memory: 1Gi
+                            requests:
+                              cpu: 10m
+                              memory: 64Mi
+                        defaultVersion: "16"
+                        resourcePresets:
+                          small:
+                            limits:
+                              cpu: "1"
+                              memory: 516Mi
+                            requests:
+                              cpu: 60m
+                              memory: 128Mi
+                        sizePresets:
+                          small: 5Gi
+                      resourcePresets:
+                        large:
+                          limits:
+                            cpu: "1"
+                            memory: 1Gi
+                          requests:
+                            cpu: 250m
+                            memory: 256Mi
+                        medium:
+                          limits:
+                            cpu: 500m
+                            memory: 512Mi
+                          requests:
+                            cpu: 100m
+                            memory: 128Mi
+                        small:
+                          limits:
+                            cpu: 100m
+                            memory: 256Mi
+                          requests:
+                            cpu: 20m
+                            memory: 64Mi
+              path: ""
+              repoURL: ghcr.io/ludat/charts
+              targetRevision: 0.1.0
+          syncPolicy:
+            automated:
+              enabled: true
+              prune: true
+            syncOptions:
+              - ServerSideApply=true

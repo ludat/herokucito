@@ -1,0 +1,49 @@
+suite: review-kargo-appset
+templates:
+  - templates/review-kargo-appset.yaml
+set:
+  platformKey: testkey
+  reviews:
+    enabled: true
+    github:
+      owner: ludat
+      repo: banana-split
+
+tests:
+  - it: renders nothing when reviews are disabled
+    set:
+      reviews:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders nothing when kargo is disabled
+    set:
+      kargoChart:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders review kargo appset
+    asserts:
+      - matchSnapshot: {}
+
+  - it: prefixes the slug with review-
+    asserts:
+      - equal:
+          path: spec.generators[0].pullRequest.values.slug
+          value: '{{ printf "review-%s" .branch | slugify 23 false }}'
+
+  - it: uses the slug as is for app, release and warehouse names
+    asserts:
+      - equal:
+          path: spec.template.metadata.name
+          value: "{{ .values.slug }}-kargo"
+      - equal:
+          path: spec.template.spec.sources[1].helm.releaseName
+          value: "{{ .values.slug }}"
+      - matchRegex:
+          path: spec.template.spec.sources[1].helm.values
+          pattern: 'warehouse: "\{\{ \.values\.slug \}\}"'

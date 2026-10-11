@@ -17,7 +17,7 @@ spec:
             key: token
         requeueAfterSeconds: 300
         values:
-          slug: "{{ `{{` }} .branch | slugify 23 false {{ `}}` }}"
+          slug: "{{ `{{` }} printf \"review-%s\" .branch | slugify 23 false {{ `}}` }}"
   ignoreApplicationDifferences:
     - jqPathExpressions:
         - .spec.sources[].helm.parameters
@@ -26,11 +26,11 @@ spec:
         - /spec/syncPolicy
   template:
     metadata:
-      name: "{{ .Values.project }}-review-{{ `{{` }} .values.slug {{ `}}` }}"
+      name: "{{ .Values.project }}-{{ `{{` }} .values.slug {{ `}}` }}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
       annotations:
-        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:review-{{ `{{` }} .values.slug {{ `}}` }}"
+        kargo.akuity.io/authorized-stage: "{{ .Values.project }}:{{ `{{` }} .values.slug {{ `}}` }}"
     spec:
       project: {{ .Values.project | quote }}
       destination:
