@@ -186,6 +186,8 @@ Built-in variables (always available):
   $(namespace) - the release namespace
 Custom variables from .Values.vars:
   $(slug) - if vars.slug is set (injected by platform)
+  $(branch) - if vars.branch is set (injected by platform on review apps)
+  $(branch_slug) - if vars.branch_slug is set (injected by platform on review apps)
   $(foo) - if vars.foo is set, etc.
 Usage: {{ include "herokucito-app.substituteVars" (dict "root" . "value" "myvalue") }}
 */}}

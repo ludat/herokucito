@@ -47,3 +47,12 @@ tests:
       - matchRegex:
           path: spec.template.spec.sources[1].helm.values
           pattern: 'warehouse: "\{\{ \.values\.slug \}\}"'
+
+  - it: injects branch and branch_slug vars
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.sources[1].helm.values
+          pattern: 'branch: \{\{ \.branch \| quote \}\}'
+      - matchRegex:
+          path: spec.template.spec.sources[1].helm.values
+          pattern: 'branch_slug: \{\{ \.branch \| slugify 23 false \| quote \}\}'

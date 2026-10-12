@@ -49,6 +49,7 @@ spec:
                 author: {{ `{{` }} .author | quote {{ `}}` }}
                 title: {{ `{{` }} .title | quote {{ `}}` }}
                 branch: {{ `{{` }} .branch | quote {{ `}}` }}
+                branch_slug: {{ `{{` }} .branch | slugify 23 false | quote {{ `}}` }}
                 sha: {{ `{{` }} .head_sha | quote {{ `}}` }}
               stage:
                 promotion:

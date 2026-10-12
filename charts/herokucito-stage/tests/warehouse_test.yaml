@@ -56,6 +56,24 @@ tests:
           value:
             - "myapp-v*"
 
+  - it: substitutes branch_slug in lexical pattern
+    set:
+      vars:
+        slug: review-feature-otlp
+        branch_slug: feature-otlp
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            source:
+              type: lexical
+              pattern: "$(branch_slug)-v*"
+    asserts:
+      - equal:
+          path: spec.subscriptions[0].image.allowTagsRegexes
+          value:
+            - "feature-otlp-v*"
+
   - it: does not render warehouse when service has no source
     set:
       services:

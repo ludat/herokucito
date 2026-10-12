@@ -45,6 +45,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Substitute variables in a string
 Custom variables from .Values.vars:
   $(slug) - if vars.slug is set
+  $(branch) - if vars.branch is set (injected by platform on review apps)
+  $(branch_slug) - if vars.branch_slug is set (injected by platform on review apps)
   $(foo) - if vars.foo is set, etc.
 Usage: {{ include "herokucito-stage.substituteVars" (dict "root" . "value" "myvalue") }}
 */}}

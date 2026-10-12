@@ -15,3 +15,21 @@ tests:
               path: /api
     asserts:
       - matchSnapshot: {}
+
+  - it: substitutes branch vars in hosts
+    set:
+      vars:
+        branch: feature/OTLP
+        branch_slug: feature-otlp
+      services:
+        backend:
+          image:
+            repository: myregistry/backend
+            tag: v1.0.0
+          port: 8080
+          routes:
+            - host: $(branch_slug).example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: feature-otlp.example.com

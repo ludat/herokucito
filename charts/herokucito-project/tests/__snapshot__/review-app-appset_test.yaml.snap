@@ -53,6 +53,7 @@ renders review appset:
                     author: {{ .author | quote }}
                     title: {{ .title | quote }}
                     branch: {{ .branch | quote }}
+                    branch_slug: {{ .branch | slugify 23 false | quote }}
                     sha: {{ .head_sha | quote }}
                   platformKey: "testkey"
                   platform:
